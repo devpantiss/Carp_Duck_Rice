@@ -1,0 +1,12 @@
+LOCUS       12345                     51 bp    DNA     linear   UNK 01-JAN-1980
+DEFINITION  Example sequence.
+ACCESSION   12345
+VERSION     12345
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+FEATURES             Location/Qualifiers
+ORIGIN
+        1 agctagctag ctagctagct agctagctag ctagctagct agctagctag c
+//
