@@ -624,6 +624,8 @@ function FAQSection() {
         }
         .faq__cta-text p { font-size: 13px; color: rgba(255,255,255,0.45); }
         .faq__cta-btns { display: flex; gap: 16px; flex-shrink: 0; }
+        .faq__cta .btn-outline { color: var(--cloud-white); }
+        .faq__cta .btn-outline:hover { background: var(--cloud-white); color: var(--text-dark); border-color: var(--cloud-white); }
         @media (max-width: 700px) {
           .faq__cta { flex-direction: column; padding: 32px 28px; }
           .faq__cta-btns { flex-direction: column; width: 100%; }

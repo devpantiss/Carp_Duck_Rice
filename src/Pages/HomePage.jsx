@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import HeroSection from '../Components/home/HeroSection'
 import CelebrationsSection from '../Components/home/CelebrationsSection'
@@ -8,9 +9,10 @@ import PartnersSection from '../Components/home/PartnersSection'
 import EnterprisesSection from '../Components/home/EnterprisesSection'
 import TestimonialsSection from '../Components/home/TestimonialsSection'
 import VisitSection from '../Components/home/VisitSection'
-import WhereWeWork from '../Components/home/WhereWeWork'
 import ProgramsProjects from '../Components/home/ProgramsProjects'
 
+// India map is heavy and near the bottom, so load it separately
+const WhereWeWork = lazy(() => import('../Components/home/WhereWeWork'))
 
 const pageVariants = {
   hidden: { opacity: 0 },
@@ -30,7 +32,9 @@ export default function HomePage() {
       <PartnersSection />
       <EnterprisesSection />
       <TestimonialsSection />
-      <WhereWeWork />
+      <Suspense fallback={null}>
+        <WhereWeWork />
+      </Suspense>
       <VisitSection />
     </motion.main>
   )
