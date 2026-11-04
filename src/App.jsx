@@ -10,15 +10,8 @@ const AboutPage = lazy(() => import('./Pages/AboutPage'))
 const ParkPage = lazy(() => import('./Pages/ParkPage'))
 const GalleryPage = lazy(() => import('./Pages/GalleryPage'))
 const ContactPage = lazy(() => import('./Pages/ContactPage'))
-const ProgramPage = lazy(() => import('./Pages/ProgramPage'))
 const WhatWeDoPage = lazy(() => import('./Pages/WhatWeDoPage'))
-const PondyFishPage = lazy(() => import('./Pages/PondyFishPage'))
-const GuavaPage = lazy(() => import('./Pages/GuavaPage'))
-const GoatsPage = lazy(() => import('./Pages/GoatsPage'))
-const TamarindPage = lazy(() => import('./Pages/TamarindPage'))
-const TassarFashionPage = lazy(() => import('./Pages/TassarFashionPage'))
-const MegaPoultryPage = lazy(() => import('./Pages/MegaPoultryPage'))
-const CoffeePage = lazy(() => import('./Pages/CoffeePage'))
+const ProgramDetailPage = lazy(() => import('./Pages/ProgramDetailPage'))
 const DashboardPage = lazy(() => import('./Pages/DashboardPage'))
 const ReportsPage = lazy(() => import('./Pages/ReportsPage'))
 const PowerBIDashboardPage = lazy(() => import('./Pages/PowerBIDashboardPage'))
@@ -45,14 +38,7 @@ function App() {
         <Route path="/park"               element={<ParkPage />} />
         <Route path="/gallery"            element={<GalleryPage />} />
         <Route path="/contact"            element={<ContactPage />} />
-        <Route path="/programs/pondy-fish"       element={<PondyFishPage />} />
-        <Route path="/programs/guavas-acrerise"   element={<GuavaPage />} />
-        <Route path="/programs/easternghats-goat" element={<GoatsPage />} />
-        <Route path="/programs/tamarind-grove"    element={<TamarindPage />} />
-        <Route path="/programs/tassar-fashion"    element={<TassarFashionPage />} />
-        <Route path="/programs/mega-poultry"      element={<MegaPoultryPage />} />
-        <Route path="/programs/tribey-coffee"     element={<CoffeePage />} />
-        <Route path="/programs/:id"       element={<ProgramPage />} />
+        <Route path="/programs/:id"       element={<ProgramDetailPage />} />
         <Route path="/dashboard"          element={<DashboardPage />} />
         <Route path="/dashboard/reports"  element={<ReportsPage />} />
         <Route path="/dashboard/powerbi/:programId" element={<PowerBIDashboardPage />} />

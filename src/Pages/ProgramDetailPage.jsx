@@ -1,18 +1,30 @@
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useInView } from 'react-intersection-observer'
 import LazyVideo from '../Components/Common/LazyVideo'
+import { programDetails } from '../data/programDetails'
 
-export default function GoatsPage() {
+export default function ProgramDetailPage() {
+  const { id } = useParams()
+  const p = programDetails[id]
+  if (!p) return (
+    <div style={{ padding: '120px 40px', textAlign: 'center' }}>
+      <h2>Program not found</h2>
+      <Link to="/">← Back to Home</Link>
+    </div>
+  )
+  return <ProgramDetail key={id} p={p} />
+}
+
+function ProgramDetail({ p }) {
   const { ref: originRef, inView: originIn } = useInView({ triggerOnce: true, threshold: 0.15 })
   const { ref: whyRef, inView: whyIn } = useInView({ triggerOnce: true, threshold: 0.15 })
   const { ref: impactRef, inView: impactIn } = useInView({ triggerOnce: true, threshold: 0.15 })
 
   return (
-    <div className="program-detail goats-page">
-      {/* Hero Section */}
+    <div className={`program-detail ${p.pageClass}`}>
       <section className="detail-hero">
-        <LazyVideo eager src="/videos/goats.mp4" />
+        <LazyVideo eager src={p.video} />
         <div className="detail-hero__overlay" />
         <div className="container detail-hero__content">
           <Link to="/what-we-do" className="back-link">
@@ -27,14 +39,13 @@ export default function GoatsPage() {
             transition={{ duration: 0.8 }}
             className="hero-card"
           >
-            <span className="eyebrow">Eastern Ghat Goats</span>
-            <h1>Raised in the Hills, Sustained by the Community.</h1>
-            <p>Sustainably managed livestock reared in harmony with the Eastern Ghats.</p>
+            <span className="eyebrow">{p.eyebrow}</span>
+            <h1>{p.title}</h1>
+            <p>{p.subtitle}</p>
           </motion.div>
         </div>
       </section>
 
-      {/* Origin Section */}
       <section className="detail-section detail-origin" ref={originRef}>
         <div className="container">
           <div className="detail-grid">
@@ -45,12 +56,12 @@ export default function GoatsPage() {
               className="detail-content"
             >
               <span className="section-label">Origin</span>
-              <h2>Nurtured in the Highland Pastures</h2>
+              <h2>{p.origin.title}</h2>
               <p className="lead">
-                Our goats graze in selected pasture areas under the care of tribal pastoralists, ensuring natural diets and animal welfare.
+                {p.origin.lead}
               </p>
               <p>
-                By avoiding confined cages and teaching sustainable rotational grazing schedules, we protect the fragile hill forest undergrowth of Odisha\'s Eastern Ghats while raising strong, healthy livestock.
+                {p.origin.text}
               </p>
             </motion.div>
             <motion.div
@@ -60,17 +71,16 @@ export default function GoatsPage() {
               className="detail-graphic"
             >
               <div className="glass-graphic">
-                <span className="emoji">🐐</span>
-                <h4>Scientific Pastoralism</h4>
-                <div className="bar-track"><div className="bar-fill" style={{ width: '100%', background: '#f7b731' }} /></div>
-                <p> Rotational schedules ensure that hill forests have time to regenerate between grazing seasons.</p>
+                <span className="emoji">{p.highlight.emoji}</span>
+                <h4>{p.highlight.title}</h4>
+                <div className="bar-track"><div className="bar-fill" style={{ width: '100%', background: p.accent }} /></div>
+                <p>{p.highlight.text}</p>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Why It Matters Section */}
       <section className="detail-section detail-why" ref={whyRef}>
         <div className="container">
           <motion.div
@@ -84,11 +94,7 @@ export default function GoatsPage() {
           </motion.div>
           
           <div className="why-grid">
-            {[
-              { title: 'High Resilience', desc: 'Indigenous breeds have adapted over centuries to thrive in seasonal drought climates.', icon: '💪' },
-              { title: 'Organic Nutrition', desc: 'Foraging in wild, pesticide-free vegetation yields clean, naturally nutritious dairy.', icon: '🥛' },
-              { title: 'Active Safety Nets', desc: 'Acts as an emergency financial asset for forest-dwelling communities during cash gaps.', icon: '🏦' }
-            ].map((item, idx) => (
+            {p.why.map((item, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 30 }}
@@ -105,7 +111,6 @@ export default function GoatsPage() {
         </div>
       </section>
 
-      {/* Impact Section */}
       <section className="detail-section detail-impact" ref={impactRef}>
         <div className="container">
           <div className="detail-grid">
@@ -115,7 +120,7 @@ export default function GoatsPage() {
               transition={{ duration: 0.8 }}
               className="detail-graphic"
             >
-              <img loading="lazy" decoding="async" src="/images/programs/goats-5.jpg" alt="Highland Livestock" className="impact-img" />
+              <img loading="lazy" decoding="async" src={p.impact.image} alt={p.impact.alt} className="impact-img" />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 30 }}
@@ -124,12 +129,12 @@ export default function GoatsPage() {
               className="detail-content"
             >
               <span className="section-label">Impact</span>
-              <h2>Stabilizing Incomes, Restoring Hills</h2>
+              <h2>{p.impact.title}</h2>
               <p className="lead">
-                Stabilizing tribal incomes while maintaining pasture biodiversity and ecological balance.
+                {p.impact.lead}
               </p>
               <p>
-                By linking remote tribal pastoralists to vet clinics and direct cooperatives, we eliminate exploitative trade loops, protect hill soils from overgrazing, and build stable rural wealth.
+                {p.impact.text}
               </p>
             </motion.div>
           </div>
@@ -185,7 +190,7 @@ export default function GoatsPage() {
           padding-top: 80px;
         }
         .back-link:hover {
-          color: #f7b731;
+          color: ${p.accent};
         }
         .hero-card {
           background: rgba(255, 255, 255, 0.03);
@@ -201,7 +206,7 @@ export default function GoatsPage() {
           font-size: 11px;
           text-transform: uppercase;
           letter-spacing: 0.2em;
-          color: #f7b731;
+          color: ${p.accent};
           font-weight: bold;
           display: block;
           margin-bottom: 16px;
@@ -239,7 +244,7 @@ export default function GoatsPage() {
           font-size: 10px;
           text-transform: uppercase;
           letter-spacing: 0.15em;
-          color: #f7b731;
+          color: ${p.accent};
           font-weight: bold;
           display: block;
           margin-bottom: 16px;
@@ -329,7 +334,7 @@ export default function GoatsPage() {
         }
         .why-card:hover {
           transform: translateY(-4px);
-          border-color: #f7b731;
+          border-color: ${p.accent};
         }
         .why-card__icon {
           font-size: 28px;
