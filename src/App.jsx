@@ -5,6 +5,7 @@ import HomePage from './Pages/HomePage'
 import Navbar from './Components/Common/Navbar'
 import Footer from './Components/Common/Footer'
 import ScrollToTop from './Components/Common/ScrollToTop'
+import RouteSeo from './Components/Common/RouteSeo'
 
 const AboutPage = lazy(() => import('./Pages/AboutPage'))
 const ParkPage = lazy(() => import('./Pages/ParkPage'))
@@ -15,6 +16,7 @@ const ProgramDetailPage = lazy(() => import('./Pages/ProgramDetailPage'))
 const DashboardPage = lazy(() => import('./Pages/DashboardPage'))
 const ReportsPage = lazy(() => import('./Pages/ReportsPage'))
 const PowerBIDashboardPage = lazy(() => import('./Pages/PowerBIDashboardPage'))
+const NotFoundPage = lazy(() => import('./Pages/NotFoundPage'))
 
 // Scroll progress bar
 function ScrollProgress() {
@@ -27,6 +29,7 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
+      <RouteSeo />
       <ScrollProgress />
       <div className="grain-overlay" style={{ animation: 'grain-anim 0.5s steps(2) infinite' }} />
       <Navbar />
@@ -43,6 +46,7 @@ function App() {
         <Route path="/dashboard/reports"  element={<ReportsPage />} />
         <Route path="/dashboard/powerbi/:programId" element={<PowerBIDashboardPage />} />
         <Route path="/dashboard/powerbi"  element={<PowerBIDashboardPage />} />
+        <Route path="*"                   element={<NotFoundPage />} />
       </Routes>
       </Suspense>
       <Footer />
