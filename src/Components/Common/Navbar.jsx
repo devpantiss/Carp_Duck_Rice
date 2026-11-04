@@ -9,6 +9,8 @@ const navLinks = [
   { label: 'Gallery',    href: '/gallery' },
   { label: 'Dashboard',  href: '/dashboard' },
 ]
+// The Contact button is hidden on small screens, so the phone menu lists it too
+const mobileLinks = [...navLinks, { label: 'Contact', href: '/contact' }]
 
 export default function Navbar() {
   const [scrolled,  setScrolled]  = useState(false)
@@ -23,10 +25,12 @@ export default function Navbar() {
 
   useEffect(() => { setMenuOpen(false) }, [location])
 
+  const solid = scrolled || location.pathname.startsWith('/dashboard')
+
   return (
     <>
       <motion.nav
-        className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}
+        className={`navbar ${solid ? 'navbar--scrolled' : ''}`}
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0,    opacity: 1 }}
         transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.3 }}
@@ -94,7 +98,7 @@ export default function Navbar() {
           >
             <div className="mobile-menu__inner">
               <div className="mobile-menu__label">Navigation</div>
-              {navLinks.map((link, i) => (
+              {mobileLinks.map((link, i) => (
                 <motion.div
                   key={link.label}
                   initial={{ x: 60, opacity: 0 }}

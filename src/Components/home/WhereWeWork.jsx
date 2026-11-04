@@ -98,6 +98,7 @@ function StateCard({ state, onClose }) {
   if (!cfg || !info) return null;
   return (
     <motion.div
+      className="wwm-card"
       initial={{ opacity: 0, y: 24, scale: 0.94 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 16, scale: 0.96 }}
       transition={{ type: 'spring', stiffness: 320, damping: 28 }}
       style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', background: 'rgba(10,20,35,0.92)', border: `1px solid ${cfg.color}55`, borderLeft: `3px solid ${cfg.color}`, borderRadius: 10, padding: '14px 22px', minWidth: 300, zIndex: 30, backdropFilter: 'blur(12px)', boxShadow: `0 8px 32px rgba(0,0,0,0.5), 0 0 20px ${cfg.color}22`, fontFamily: "'Rajdhani', sans-serif" }}
@@ -133,6 +134,7 @@ function Sidebar({ selected, onSelect }) {
 
   return (
     <motion.div
+      className="wwm-sidebar"
       initial={{ opacity: 0, x: 40 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
@@ -320,6 +322,19 @@ export default function IndiaMapDashboard() {
       padding: 24,
       overflow: 'hidden',
     }}>
+      {/* Smaller screens: scale the map with its box (same 700/752 ratio as desktop) so the pins stay on their states; stack the list and info card under the map on phones */}
+      <style>{`
+        @media (max-width: 1100px) {
+          .wwm-svg > .map { width: 93.1% !important; }
+          .wwm-svg svg { width: 100%; height: auto; }
+        }
+        @media (max-width: 900px) {
+          .wwm-row { flex-direction: column; align-items: stretch !important; }
+          .wwm-map { flex: none !important; width: 100%; }
+          .wwm-sidebar { width: 100% !important; }
+          .wwm-card { position: relative !important; left: auto !important; bottom: auto !important; min-width: 0 !important; margin-top: 12px; }
+        }
+      `}</style>
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -334,7 +349,7 @@ export default function IndiaMapDashboard() {
       </motion.div>
 
       {/* Body: map + sidebar */}
-      <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', width: '100%', maxWidth: 1080 }}>
+      <div className="wwm-row" style={{ display: 'flex', gap: 28, alignItems: 'flex-start', width: '100%', maxWidth: 1080 }}>
 
         {/* ── MAP (completely untouched) ── */}
         <motion.div
@@ -342,8 +357,11 @@ export default function IndiaMapDashboard() {
           initial={{ opacity: 0, scale: 0.92 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="wwm-map"
           style={{ position: 'relative', flex: 1, minWidth: 0 }}
         >
+          {/* Map + pins box: pins are placed in % of this box, so the info card stays outside it */}
+          <div className="wwm-canvas" style={{ position: 'relative' }}>
           {/* Glow Odisha */}
           <motion.div animate={{ scale: [1, 1.08, 1], opacity: [0.5, 0.7, 0.5] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             style={{ position: 'absolute', width: 240, height: 240, borderRadius: '50%', background: 'radial-gradient(circle, rgba(21,101,192,0.38) 0%, transparent 70%)', top: '44%', left: '57%', transform: 'translate(-50%, -50%)', pointerEvents: 'none', zIndex: 1 }} />
@@ -351,7 +369,7 @@ export default function IndiaMapDashboard() {
           <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.6, 0.4] }} transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
             style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', background: 'radial-gradient(circle, rgba(249,168,37,0.3) 0%, transparent 70%)', top: '82%', left: '44%', transform: 'translate(-50%, -50%)', pointerEvents: 'none', zIndex: 1 }} />
 
-          <div style={{ position: 'relative', zIndex: 2 }}>
+          <div className="wwm-svg" style={{ position: 'relative', zIndex: 2 }}>
             <India type="select-single" size={700} mapColor="#b8cfe0" strokeColor="#0d1b2a" strokeWidth={1} hoverColor="#7fb3d3" selectColor="#1565c0" hints={false} onSelect={handleMapSelect} />
           </div>
 
@@ -365,6 +383,7 @@ export default function IndiaMapDashboard() {
               </motion.div>
             );
           })}
+          </div>
 
           <AnimatePresence mode="wait">
             {selected && <StateCard key={selected} state={selected} onClose={() => setSelected(null)} />}

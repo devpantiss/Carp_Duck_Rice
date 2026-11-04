@@ -931,6 +931,7 @@ export default function FeaturedPrograms() {
           }
           .orbit-nav {
             max-width: 650px;
+            height: auto; /* buttons wrap onto several rows here, so let the row grow instead of covering the circle */
           }
           .orbit-ellipse-svg {
             display: none; /* Hide background path on smaller screens to prevent overflow layout gaps */

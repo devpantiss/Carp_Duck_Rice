@@ -578,6 +578,8 @@ function GalleryGrid() {
           transition: transform 0.4s var(--ease-cinematic);
         }
         .gallery-item:hover .gallery-item__info { transform: translateY(0); }
+        /* Touch screens have no hover, so show the caption fully */
+        @media (hover: none) { .gallery-item__info { transform: none; } }
         .gallery-item__cat {
           font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
           color: var(--accent-gold); margin-bottom: 4px;

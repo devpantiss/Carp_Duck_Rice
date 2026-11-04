@@ -27,7 +27,7 @@ export const programDetails = {
       alt: 'Thriving Aquaculture',
       title: 'Empowering Communities, Preserving Nature',
       lead: 'Supporting local communities while preserving aquatic ecosystems.',
-      text: "By training community self-help groups in sustainable pond stewardship, we turn environmental protection into a reliable, generational income stream that guards Odisha\\'s natural water bodies.",
+      text: "By training community self-help groups in sustainable pond stewardship, we turn environmental protection into a reliable, generational income stream that guards Odisha's natural water bodies.",
     },
   },
   'guavas-acrerise': {
@@ -40,7 +40,7 @@ export const programDetails = {
     origin: {
       title: 'Working in Harmony with Seasons',
       lead: 'Our orchards are designed to work in harmony with the land, climate, and seasonal rhythms.',
-      text: "By positioning the guava trees within a multi-layer agroforestry model, we capture rainfall and lock organic compost back into the soil, utilizing nature\\'s natural flow rather than artificial systems.",
+      text: "By positioning the guava trees within a multi-layer agroforestry model, we capture rainfall and lock organic compost back into the soil, utilizing nature's natural flow rather than artificial systems.",
     },
     highlight: {
       emoji: '🌳',
@@ -70,7 +70,7 @@ export const programDetails = {
     origin: {
       title: 'Nurtured in the Highland Pastures',
       lead: 'Our goats graze in selected pasture areas under the care of tribal pastoralists, ensuring natural diets and animal welfare.',
-      text: "By avoiding confined cages and teaching sustainable rotational grazing schedules, we protect the fragile hill forest undergrowth of Odisha\\'s Eastern Ghats while raising strong, healthy livestock.",
+      text: "By avoiding confined cages and teaching sustainable rotational grazing schedules, we protect the fragile hill forest undergrowth of Odisha's Eastern Ghats while raising strong, healthy livestock.",
     },
     highlight: {
       emoji: '🐐',
@@ -100,7 +100,7 @@ export const programDetails = {
     origin: {
       title: 'Wild-Harvested Community Woodlands',
       lead: 'Our tamarind trees grow in drought-resilient community woodlands and are collected using sustainable forest practices.',
-      text: "By protecting these long-lived, indigenous groves and gathering wild fruits carefully without breaking branches, we maintain the natural woodland architecture of Odisha\\'s drylands.",
+      text: "By protecting these long-lived, indigenous groves and gathering wild fruits carefully without breaking branches, we maintain the natural woodland architecture of Odisha's drylands.",
     },
     highlight: {
       emoji: '🌳',

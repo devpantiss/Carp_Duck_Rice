@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { useInView } from 'react-intersection-observer'
 import LazyVideo from '../Common/LazyVideo'
 
@@ -88,13 +89,13 @@ export default function VisitSection() {
             animate={inView ? { opacity: 1 } : {}}
             transition={{ delay: 0.9 }}
           >
-            <a href="/contact" className="btn-primary">
+            <Link to="/contact" className="btn-primary">
               <span>Plan a Field Visit</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </a>
-            <a href="/park" className="btn-outline">Explore the Park</a>
+            </Link>
+            <Link to="/park" className="btn-outline">Explore the Park</Link>
           </motion.div>
         </div>
       </div>
