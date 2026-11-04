@@ -1,6 +1,6 @@
-import { useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
+import LazyVideo from '../Common/LazyVideo'
 
 const enterprises = [
   {
@@ -71,19 +71,13 @@ const enterprises = [
 ]
 
 export default function EnterprisesSection() {
-  const videoRef = useRef(null)
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 })
 
   return (
     <section className="enterprises-sec" ref={ref}>
       {/* Background autoplay video loop */}
-      <video
-        ref={videoRef}
-        src="/14044649-uhd_3840_2160_24fps.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
+      <LazyVideo
+        src="/videos/enterprises.mp4"
         className="enterprises-sec__video"
       />
 

@@ -12,7 +12,7 @@ const galleryItems = [
     sub: 'Carp feeding at dawn', span: 'tall',
     palette: ['#ffd54f','#ff6f00','#ef5350'],
     scene: (
-      <img src="/pondy_fish_1.jpg" alt="Feeding Swarm" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/pondy-fish-1.jpg" alt="Feeding Swarm" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -20,7 +20,7 @@ const galleryItems = [
     sub: 'Freshly plucked guavas in a wicker basket', span: 'wide',
     palette: ['#14532d','#22c55e','#f9a825'],
     scene: (
-      <img src="/guavas_1.jpg" alt="Guava Harvest" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/guavas-1.jpg" alt="Guava Harvest" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
 
@@ -29,7 +29,7 @@ const galleryItems = [
     sub: 'Fingerlings ready for release', span: 'wide',
     palette: ['#1565c0','#0d47a1','#8d6e63'],
     scene: (
-      <img src="/pondy_fish_2.jpg" alt="Seed Stocking" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/pondy-fish-2.jpg" alt="Seed Stocking" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -37,7 +37,7 @@ const galleryItems = [
     sub: 'Layered tamarind leaves catching soft light', span: 'tall',
     palette: ['#1b5e20','#66bb6a','#dce775'],
     scene: (
-      <img src="/tamarind_grove_1.jpg" alt="Tamarind Canopy" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tamarind-grove-1.jpg" alt="Tamarind Canopy" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -45,7 +45,7 @@ const galleryItems = [
     sub: 'Ripe tamarind pods gathered for processing', span: 'square',
     palette: ['#3e2723','#8d4a24','#d7a35d'],
     scene: (
-      <img src="/tamarind_grove_2.jpg" alt="Harvest Bowl" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tamarind-grove-2.jpg" alt="Harvest Bowl" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -53,7 +53,7 @@ const galleryItems = [
     sub: 'Mature trees and new tamarind leaf growth', span: 'square',
     palette: ['#2e7d32','#9ccc65','#5d4037'],
     scene: (
-      <img src="/tamarind_grove_3.jpg" alt="Grove Trunk" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tamarind-grove-3.jpg" alt="Grove Trunk" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -61,7 +61,7 @@ const galleryItems = [
     sub: 'Fresh local catch ready for sale', span: 'square',
     palette: ['#e91e63','#81d4fa','#4caf50'],
     scene: (
-      <img src="/pondy_fish_3.jpg" alt="Market Day" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/pondy-fish-3.jpg" alt="Market Day" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -69,7 +69,7 @@ const galleryItems = [
     sub: 'Fresh tamarind pod held after harvest', span: 'wide',
     palette: ['#8d6e63','#c0a36e','#f5f5f5'],
     scene: (
-      <img src="/tamarind_grove_4.jpg" alt="Handpicked Pod" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tamarind-grove-4.jpg" alt="Handpicked Pod" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -77,7 +77,7 @@ const galleryItems = [
     sub: 'Tamarind pod hanging among compound leaves', span: 'tall',
     palette: ['#558b2f','#c7a66a','#1b5e20'],
     scene: (
-      <img src="/tamarind_grove_5.jpg" alt="Pod on Branch" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tamarind-grove-5.jpg" alt="Pod on Branch" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -85,7 +85,7 @@ const galleryItems = [
     sub: 'Grading the morning harvest', span: 'square',
     palette: ['#90caf9','#546e7a','#b3e5fc'],
     scene: (
-      <img src="/pondy_fish_4.jpg" alt="Silver Carp Sorting" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/pondy-fish-4.jpg" alt="Silver Carp Sorting" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -93,7 +93,7 @@ const galleryItems = [
     sub: 'Cooperative fishers drawing the net', span: 'wide',
     palette: ['#0d1b4b','#1a237e','#ff8f00'],
     scene: (
-      <img src="/pondy_fish_5.jpg" alt="Community Netting" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/pondy-fish-5.jpg" alt="Community Netting" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -101,7 +101,7 @@ const galleryItems = [
     sub: 'Sun-ripened pink guava showing rich inner flesh', span: 'wide',
     palette: ['#f48fb1','#81c784','#e57373'],
     scene: (
-      <img src="/guavas_2.jpg" alt="Ruby Guava Harvest" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/guavas-2.jpg" alt="Ruby Guava Harvest" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -109,7 +109,7 @@ const galleryItems = [
     sub: 'Freshly dropped guavas resting on orchard leaves', span: 'wide',
     palette: ['#1b5e20','#aed581','#fff9c4'],
     scene: (
-      <img src="/guavas_3.jpg" alt="Canopy Gathering" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/guavas-3.jpg" alt="Canopy Gathering" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -117,7 +117,7 @@ const galleryItems = [
     sub: 'Guavas maturing naturally under the orchard sun', span: 'tall',
     palette: ['#33691e','#d4e157','#ffd54f'],
     scene: (
-      <img src="/guavas_4.jpg" alt="Ripening Clusters" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/guavas-4.jpg" alt="Ripening Clusters" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -125,7 +125,7 @@ const galleryItems = [
     sub: 'Carefully sorted yellow and green guavas ready for selection', span: 'square',
     palette: ['#827717','#c5e1a5','#fff59d'],
     scene: (
-      <img src="/guavas_5.jpg" alt="Orchard Handpick" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/guavas-5.jpg" alt="Orchard Handpick" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -133,7 +133,7 @@ const galleryItems = [
     sub: 'Goat herd grazing in selected pastures of Eastern Ghats', span: 'wide',
     palette: ['#4e342e','#d7ccc8','#8d6e63'],
     scene: (
-      <img src="/goats_1.jpg" alt="Hillside Grazing" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/goats-1.jpg" alt="Hillside Grazing" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -141,7 +141,7 @@ const galleryItems = [
     sub: 'Tribal pastoralist leading the herd on their daily path', span: 'wide',
     palette: ['#0d47a1','#bbdefb','#1565c0'],
     scene: (
-      <img src="/goats_2.jpg" alt="Pastoral Journey" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/goats-2.jpg" alt="Pastoral Journey" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -149,7 +149,7 @@ const galleryItems = [
     sub: 'Black goat herd guided along a dirt path under gray skies', span: 'square',
     palette: ['#212121','#f8bbd0','#e91e63'],
     scene: (
-      <img src="/goats_3.jpg" alt="Monsoon Trail" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/goats-3.jpg" alt="Monsoon Trail" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -157,7 +157,7 @@ const galleryItems = [
     sub: 'Two young goats nudging and playing close up', span: 'tall',
     palette: ['#5d4037','#ffe0b2','#ff9800'],
     scene: (
-      <img src="/goats_4.jpg" alt="Playful Companions" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/goats-4.jpg" alt="Playful Companions" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -165,7 +165,7 @@ const galleryItems = [
     sub: 'Goat and kid resting peacefully together in the grass', span: 'wide',
     palette: ['#3e2723','#f5f5f5','#5d4037'],
     scene: (
-      <img src="/goats_5.jpg" alt="Motherhood" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/goats-5.jpg" alt="Motherhood" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -173,7 +173,7 @@ const galleryItems = [
     sub: 'Handpicked golden Tassar cocoons', span: 'square',
     palette: ['#d7a35d', '#8d4a24', '#f5f5f5'],
     scene: (
-      <img src="/tassar_fashion_1.jpg" alt="Cocoon Harvest" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tassar-fashion-1.jpg" alt="Cocoon Harvest" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -181,7 +181,7 @@ const galleryItems = [
     sub: 'Traditional handloom weaving process', span: 'wide',
     palette: ['#8d6e63', '#ffd54f', '#3e2723'],
     scene: (
-      <img src="/tassar_fashion_2.jpg" alt="Artisan Weaving" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tassar-fashion-2.jpg" alt="Artisan Weaving" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -189,7 +189,7 @@ const galleryItems = [
     sub: 'Detailed traditional ikat designs', span: 'tall',
     palette: ['#ef5350', '#ff6f00', '#ffd54f'],
     scene: (
-      <img src="/tassar_fashion_3.jpg" alt="Intricate Patterns" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tassar-fashion-3.jpg" alt="Intricate Patterns" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -197,7 +197,7 @@ const galleryItems = [
     sub: 'Tassar silk yarn wound on bobbins', span: 'square',
     palette: ['#ff8f00', '#8d6e63', '#0d47a1'],
     scene: (
-      <img src="/tassar_fashion_4.jpg" alt="Golden Spindles" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tassar-fashion-4.jpg" alt="Golden Spindles" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -205,7 +205,7 @@ const galleryItems = [
     sub: 'Showcasing organic handloom silk drapes', span: 'wide',
     palette: ['#c7a66a', '#1b5e20', '#ffe0b2'],
     scene: (
-      <img src="/tassar_fashion_5.jpg" alt="Modern Elegance" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/tassar-fashion-5.jpg" alt="Modern Elegance" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -213,7 +213,7 @@ const galleryItems = [
     sub: 'Backyard poultry house in a green garden', span: 'wide',
     palette: ['#2e7d32', '#9ccc65', '#5d4037'],
     scene: (
-      <img src="/mega_poultry_1.jpg" alt="Sustainable Coop" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/mega-poultry-1.jpg" alt="Sustainable Coop" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -221,7 +221,7 @@ const galleryItems = [
     sub: 'Country chickens feeding in the courtyard', span: 'square',
     palette: ['#ff9800', '#ffe0b2', '#5d4037'],
     scene: (
-      <img src="/mega_poultry_2.jpg" alt="Daily Feeding" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/mega-poultry-2.jpg" alt="Daily Feeding" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -229,7 +229,7 @@ const galleryItems = [
     sub: 'Freshly gathered country eggs in a basket', span: 'tall',
     palette: ['#ffd54f', '#f5f5f5', '#8d6e63'],
     scene: (
-      <img src="/mega_poultry_3.jpg" alt="Organic Harvest" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/mega-poultry-3.jpg" alt="Organic Harvest" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -237,7 +237,7 @@ const galleryItems = [
     sub: 'Community assembling a bamboo poultry coop', span: 'wide',
     palette: ['#1565c0', '#aed581', '#bbdefb'],
     scene: (
-      <img src="/mega_poultry_4.jpg.jpg" alt="Coop Building" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/mega-poultry-4.jpg" alt="Coop Building" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -245,7 +245,7 @@ const galleryItems = [
     sub: 'Rural woman with her country poultry enterprise', span: 'square',
     palette: ['#e91e63', '#4caf50', '#81d4fa'],
     scene: (
-      <img src="/mega_poultry_5.jpg" alt="Livelihood Pride" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/mega-poultry-5.jpg" alt="Livelihood Pride" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -253,7 +253,7 @@ const galleryItems = [
     sub: 'Organic coffee shrubs growing under a diverse forest canopy', span: 'wide',
     palette: ['#3e2723', '#8d6e63', '#aed581'],
     scene: (
-      <img src="/coffee_1.jpg" alt="Shade Cultivation" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/coffee-1.jpg" alt="Shade Cultivation" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -261,7 +261,7 @@ const galleryItems = [
     sub: 'Bright red coffee cherries ready for handpicking', span: 'square',
     palette: ['#c0392b', '#8d6e63', '#fff9c4'],
     scene: (
-      <img src="/coffee_2.jpg" alt="Ripe Cherries" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/coffee-2.jpg" alt="Ripe Cherries" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -269,7 +269,7 @@ const galleryItems = [
     sub: 'Coffee beans drying on community drying mats', span: 'tall',
     palette: ['#ffd54f', '#f5f5f5', '#8d6e63'],
     scene: (
-      <img src="/coffee_3.jpg" alt="Artisan Drying" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/coffee-3.jpg" alt="Artisan Drying" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -277,7 +277,7 @@ const galleryItems = [
     sub: 'Carefully grading and sorting harvested coffee beans', span: 'wide',
     palette: ['#1565c0', '#aed581', '#bbdefb'],
     scene: (
-      <img src="/coffee_4.jpg" alt="Quality Sorting" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/coffee-4.jpg" alt="Quality Sorting" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
   {
@@ -285,7 +285,7 @@ const galleryItems = [
     sub: 'Tribal women roasting small batches of single-origin coffee', span: 'square',
     palette: ['#3e2723', '#ffd54f', '#e67e22'],
     scene: (
-      <img src="/coffee_5.jpg" alt="Community Roast" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+      <img loading="lazy" decoding="async" src="/images/programs/coffee-5.jpg" alt="Community Roast" style={{width:'100%',height:'100%',objectFit:'cover'}} />
     ),
   },
 ]
@@ -388,7 +388,7 @@ function GalleryHero() {
     <section className="gallery-hero">
       <div className="gallery-hero__bg">
         <motion.img
-          src="/gallery_hero.png"
+          src="/images/backgrounds/gallery-hero.jpg"
           alt="Carp Duck Rice Park Gallery background"
           initial={{ scale: 1.12, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

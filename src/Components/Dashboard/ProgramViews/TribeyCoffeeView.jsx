@@ -14,17 +14,17 @@ export default function TribeyCoffeeView() {
   }, [])
 
   const galleryImages = [
-    '/coffee_1.jpg',
-    '/coffee_2.jpg',
-    '/coffee_3.jpg',
-    '/coffee_4.jpg'
+    '/images/programs/coffee-1.jpg',
+    '/images/programs/coffee-2.jpg',
+    '/images/programs/coffee-3.jpg',
+    '/images/programs/coffee-4.jpg'
   ]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       
       {/* Dark Hero */}
-      <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(92, 62, 33, 0.9) 100%), url("/coffee_2.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(92, 62, 33, 0.9) 100%), url("/images/programs/coffee-2.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px', border: '1px solid rgba(255,255,255,0.06)' }}>
         <div>
           <span className="banner-eyebrow" style={{ color: 'var(--accent-gold)', letterSpacing: '0.2em' }}>ARABICA ESTATE VALUE LOOP</span>
           <h1 style={{ color: 'white', fontSize: '38px', margin: '4px 0 0 0', fontWeight: 300, fontFamily: 'var(--font-display)' }}>TRIBEY COFFEE PROCESSING</h1>
@@ -101,7 +101,7 @@ export default function TribeyCoffeeView() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           {galleryImages.map((src, i) => (
             <div key={i} style={{ height: '110px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <img src={src} alt="Coffee plantation gallery" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} className="gallery-hover-zoom" />
+              <img loading="lazy" decoding="async" src={src} alt="Coffee plantation gallery" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} className="gallery-hover-zoom" />
             </div>
           ))}
         </div>

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useInView } from 'react-intersection-observer'
+import LazyVideo from '../Components/Common/LazyVideo'
 
 export default function CoffeePage() {
   const { ref: originRef, inView: originIn } = useInView({ triggerOnce: true, threshold: 0.15 })
@@ -11,7 +12,7 @@ export default function CoffeePage() {
     <div className="program-detail coffee-page">
       {/* Hero Section */}
       <section className="detail-hero">
-        <video src="/coffee.mp4" autoPlay muted loop playsInline />
+        <LazyVideo eager src="/videos/coffee.mp4" />
         <div className="detail-hero__overlay" />
         <div className="container detail-hero__content">
           <Link to="/what-we-do" className="back-link">
@@ -114,7 +115,7 @@ export default function CoffeePage() {
               transition={{ duration: 0.8 }}
               className="detail-graphic"
             >
-              <img src="/coffee_5.jpg" alt="Thriving Coffee Crops" className="impact-img" />
+              <img loading="lazy" decoding="async" src="/images/programs/coffee-5.jpg" alt="Thriving Coffee Crops" className="impact-img" />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 30 }}

@@ -14,17 +14,17 @@ export default function TassarFashionView() {
   }, [])
 
   const galleryImages = [
-    '/tassar_fashion_1.jpg',
-    '/tassar_fashion_2.jpg',
-    '/tassar_fashion_3.jpg',
-    '/tassar_fashion_4.jpg'
+    '/images/programs/tassar-fashion-1.jpg',
+    '/images/programs/tassar-fashion-2.jpg',
+    '/images/programs/tassar-fashion-3.jpg',
+    '/images/programs/tassar-fashion-4.jpg'
   ]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       
       {/* Hero */}
-      <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(212, 172, 13, 0.9) 0%, rgba(240, 230, 211, 0.8) 100%), url("/tassar_fashion_1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px', border: '1px solid rgba(212,172,13,0.25)' }}>
+      <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(212, 172, 13, 0.9) 0%, rgba(240, 230, 211, 0.8) 100%), url("/images/programs/tassar-fashion-1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px', border: '1px solid rgba(212,172,13,0.25)' }}>
         <div>
           <span className="banner-eyebrow" style={{ color: 'var(--text-dark)', letterSpacing: '0.2em' }}>HERITAGE WEAVING VALUE CHAIN</span>
           <h1 style={{ color: 'var(--text-dark)', fontSize: '38px', margin: '4px 0 0 0', fontWeight: 300, fontFamily: 'var(--font-display)' }}>Tassar Silk Fashion Center</h1>
@@ -116,7 +116,7 @@ export default function TassarFashionView() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           {galleryImages.map((src, i) => (
             <div key={i} style={{ height: '110px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(212,172,13,0.15)' }}>
-              <img src={src} alt="Silk fashion gallery" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} className="gallery-hover-zoom" />
+              <img loading="lazy" decoding="async" src={src} alt="Silk fashion gallery" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} className="gallery-hover-zoom" />
             </div>
           ))}
         </div>

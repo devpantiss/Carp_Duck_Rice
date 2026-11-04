@@ -7,10 +7,10 @@ export default function GoatsView() {
   const [activePaddock, setActivePaddock] = useState('Paddock 2')
   
   const galleryImages = [
-    '/goats_1.jpg',
-    '/goats_2.jpg',
-    '/goats_3.jpg',
-    '/goats_4.jpg'
+    '/images/programs/goats-1.jpg',
+    '/images/programs/goats-2.jpg',
+    '/images/programs/goats-3.jpg',
+    '/images/programs/goats-4.jpg'
   ]
 
   const paddocks = [
@@ -24,7 +24,7 @@ export default function GoatsView() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       
       {/* Hero */}
-      <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(120, 66, 18, 0.9) 0%, rgba(212, 172, 13, 0.75) 100%), url("/goats_1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
+      <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(120, 66, 18, 0.9) 0%, rgba(212, 172, 13, 0.75) 100%), url("/images/programs/goats-1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
         <div>
           <span className="banner-eyebrow" style={{ color: 'rgba(255,255,255,0.85)', letterSpacing: '0.2em' }}>MOUNTAIN PASTURE &amp; HERITAGE COOPERATIVE</span>
           <h1 style={{ color: 'white', fontSize: '38px', margin: '4px 0 0 0', fontWeight: 300, fontFamily: 'var(--font-display)' }}>Eastern Ghats Goats Hub</h1>
@@ -133,7 +133,7 @@ export default function GoatsView() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           {galleryImages.map((src, i) => (
             <div key={i} style={{ height: '110px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.06)' }}>
-              <img src={src} alt="Goat pasture gallery" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} className="gallery-hover-zoom" />
+              <img loading="lazy" decoding="async" src={src} alt="Goat pasture gallery" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} className="gallery-hover-zoom" />
             </div>
           ))}
         </div>

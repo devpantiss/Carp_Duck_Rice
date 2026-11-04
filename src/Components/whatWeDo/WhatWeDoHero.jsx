@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import LazyVideo from '../Common/LazyVideo'
 
 export default function WhatWeDoHero() {
   const [activePillar, setActivePillar] = useState(null)
@@ -62,13 +63,7 @@ export default function WhatWeDoHero() {
   return (
     <section className="what-hero">
       <div className="what-hero__bg">
-        <video
-          src="/12339388_1920_1080_25fps.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
+        <LazyVideo eager src="/videos/goats.mp4" />
       </div>
       <div className="what-hero__overlay" style={{ background: activeSeason.bg }} />
       

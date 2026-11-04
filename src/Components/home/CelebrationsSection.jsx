@@ -11,7 +11,7 @@ const programs = [
     background: '#f1f6fa',
     glow: 'rgba(32, 118, 180, 0.12)',
     border: 'rgba(32, 118, 180, 0.15)',
-    icon: '/icons/icon_1.png'
+    icon: '/images/icons/icon-1.png'
   },
   {
     id: 'guavas-acrerise',
@@ -22,7 +22,7 @@ const programs = [
     background: '#f2f8f4',
     glow: 'rgba(39, 174, 96, 0.12)',
     border: 'rgba(39, 174, 96, 0.15)',
-    icon: '/icons/icon_2.png'
+    icon: '/images/icons/icon-2.png'
   },
   {
     id: 'easternghats-goat',
@@ -33,7 +33,7 @@ const programs = [
     background: '#fdf6f0',
     glow: 'rgba(141, 110, 99, 0.12)',
     border: 'rgba(141, 110, 99, 0.15)',
-    icon: '/icons/icon_3.png'
+    icon: '/images/icons/icon-3.png'
   },
   {
     id: 'tamarind-grove',
@@ -44,7 +44,7 @@ const programs = [
     background: '#f5f8f2',
     glow: 'rgba(85, 139, 47, 0.12)',
     border: 'rgba(85, 139, 47, 0.15)',
-    icon: '/icons/icon_4.png'
+    icon: '/images/icons/icon-4.png'
   },
   {
     id: 'tassar-fashion',
@@ -55,7 +55,7 @@ const programs = [
     background: '#f9f2fa',
     glow: 'rgba(123, 31, 162, 0.12)',
     border: 'rgba(123, 31, 162, 0.15)',
-    icon: '/icons/icon_5.png'
+    icon: '/images/icons/icon-5.png'
   },
   {
     id: 'mega-poultry',
@@ -66,7 +66,7 @@ const programs = [
     background: '#fdfaf2',
     glow: 'rgba(217, 119, 6, 0.12)',
     border: 'rgba(217, 119, 6, 0.15)',
-    icon: '/icons/icon_6.png'
+    icon: '/images/icons/icon-6.png'
   },
   {
     id: 'tribey-coffee',
@@ -77,7 +77,7 @@ const programs = [
     background: '#f8f4f2',
     glow: 'rgba(93, 64, 55, 0.12)',
     border: 'rgba(93, 64, 55, 0.15)',
-    icon: '/icons/icon_8.png'
+    icon: '/images/icons/icon-8.png'
   }
 ]
 
@@ -142,7 +142,7 @@ export default function CelebrationsSection() {
               {/* Double-circle floating frame overlapping card boundary */}
               <div className="card-outer-circle">
                 <div className="card-inner-circle">
-                  <img src={prog.icon} alt={prog.titleLines.join(' ')} className="card-illustration" />
+                  <img loading="lazy" decoding="async" src={prog.icon} alt={prog.titleLines.join(' ')} className="card-illustration" />
                 </div>
               </div>
 
@@ -178,7 +178,7 @@ export default function CelebrationsSection() {
         /* Celebrations Section Container */
         .celebrations-sec {
           background-color: #FAF7F2;
-          background-image: url('/celebrations-bg.png');
+          background-image: url('/images/backgrounds/celebrations.jpg');
           background-size: cover;
           background-position: center;
           background-repeat: no-repeat;

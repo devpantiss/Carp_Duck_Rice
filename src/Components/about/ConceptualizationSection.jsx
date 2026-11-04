@@ -215,7 +215,7 @@ function ForcesScene() {
             transition={{ duration: 0.9, delay: index * 0.12 }}
           >
             <div className="concept-cinema__force-bg">
-              <img src={`/${force.className}.jpg`} alt={force.name} />
+              <img loading="lazy" decoding="async" src={`/images/concept/${force.className}.jpg`} alt={force.name} />
               <div className="concept-cinema__force-overlay" />
             </div>
             <div className="concept-cinema__force-copy">
@@ -294,7 +294,7 @@ function VisionScene() {
           })}
         </Motion.div>
         <div className="concept-cinema__logo">
-          <img src="/logo-square.png" alt="Carp, Rice & Duck Logo" style={{ width: '90px', height: '90px', objectFit: 'contain', background: 'transparent' }} />
+          <img loading="lazy" decoding="async" src="/images/brand/logo-square.png" alt="Carp, Rice & Duck Logo" style={{ width: '90px', height: '90px', objectFit: 'contain', background: 'transparent' }} />
         </div>
       </Motion.div>
       <div className="concept-cinema__vision-copy">

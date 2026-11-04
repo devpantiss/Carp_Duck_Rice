@@ -60,15 +60,15 @@ export default function DashboardPage() {
     tab.label.toLowerCase().includes(searchQuery.toLowerCase())
   )
   const programPulse = [
-    { id: 'overview', label: 'Ecosystem Portal', icon: '⌂', value: 'Park overview', image: '/park_hero.png' },
-    { id: 'pondy-fish', label: 'Pondy Fish', icon: '🐟', value: '6.5 O₂', image: '/pondy_fish_1.jpg' },
-    { id: 'guavas-acrerise', label: 'Guavas AcreRise', icon: '🍈', value: '91 health', image: '/guavas_1.jpg' },
-    { id: 'ghats-goat', label: 'Eastern Ghats Goats', icon: '🐐', value: '98.2 index', image: '/goats_1.jpg' },
-    { id: 'tamarind-grove', label: 'Tamarind Grove', icon: '🌳', value: '18.6 t CO₂', image: '/tamarind_grove_1.jpg' },
-    { id: 'tassar-fashion', label: 'Tassar Fashion', icon: '🧵', value: '8 looms', image: '/tassar_fashion_1.jpg' },
-    { id: 'poultry-reserve', label: 'Poultry Reserve', icon: '🐓', value: '380 eggs', image: '/mega_poultry_1.jpg' },
-    { id: 'tribey-coffee', label: 'Tribey Coffee', icon: '☕', value: '87 quality', image: '/coffee_1.jpg' },
-    { id: 'reports', label: 'Reports', icon: '📑', value: 'Annual report', image: '/park_hero.png' }
+    { id: 'overview', label: 'Ecosystem Portal', icon: '⌂', value: 'Park overview', image: '/images/backgrounds/park-hero.jpg' },
+    { id: 'pondy-fish', label: 'Pondy Fish', icon: '🐟', value: '6.5 O₂', image: '/images/programs/pondy-fish-1.jpg' },
+    { id: 'guavas-acrerise', label: 'Guavas AcreRise', icon: '🍈', value: '91 health', image: '/images/programs/guavas-1.jpg' },
+    { id: 'ghats-goat', label: 'Eastern Ghats Goats', icon: '🐐', value: '98.2 index', image: '/images/programs/goats-1.jpg' },
+    { id: 'tamarind-grove', label: 'Tamarind Grove', icon: '🌳', value: '18.6 t CO₂', image: '/images/programs/tamarind-grove-1.jpg' },
+    { id: 'tassar-fashion', label: 'Tassar Fashion', icon: '🧵', value: '8 looms', image: '/images/programs/tassar-fashion-1.jpg' },
+    { id: 'poultry-reserve', label: 'Poultry Reserve', icon: '🐓', value: '380 eggs', image: '/images/programs/mega-poultry-1.jpg' },
+    { id: 'tribey-coffee', label: 'Tribey Coffee', icon: '☕', value: '87 quality', image: '/images/programs/coffee-1.jpg' },
+    { id: 'reports', label: 'Reports', icon: '📑', value: 'Annual report', image: '/images/backgrounds/park-hero.jpg' }
   ]
   const activeProgram = programPulse.find(program => program.id === activeTab)
 
@@ -99,7 +99,7 @@ export default function DashboardPage() {
         <aside className="floating-os-sidebar">
           <div className="sidebar-logo">
             <img
-              src="/logo-horizontal.png"
+              src="/images/brand/logo-horizontal.png"
               alt="Carp, Rice & Duck Livelihood Park"
               style={{
                 height: '42px',

@@ -10,7 +10,7 @@ function ContactHero() {
     <section className="contact-hero">
       <div className="contact-hero__bg">
         <motion.img
-          src="/contact_hero.png"
+          src="/images/backgrounds/contact-hero.jpg"
           alt="Carp Duck Rice Park background"
           initial={{ scale: 1.12, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

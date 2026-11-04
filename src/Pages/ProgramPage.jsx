@@ -1,12 +1,13 @@
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
+import LazyVideo from '../Components/Common/LazyVideo'
 
 const programData = {
   'pondy-fish': {
     title: 'Pondy Fish',
     subtitle: 'pondy fish aquaculture',
-    video: '/16490647-hd_1920_1080_60fps.mp4',
+    video: '/videos/pondy-fish.mp4',
     color: '#0d2233',
     accent: '#4ecdc4',
     emoji: '🐟',
@@ -40,7 +41,7 @@ const programData = {
   'guavas-acrerise': {
     title: 'Guavas AcreRise',
     subtitle: 'Sustainable Agriculture ',
-    video: '/WhatsApp Video 2026-06-03 at 17.39.43.mp4',
+    video: '/videos/guavas.mp4',
     color: '#0d2214',
     accent: '#a8e063',
     emoji: '🌿',
@@ -74,7 +75,7 @@ const programData = {
   'easternghats-goat': {
     title: 'Eastern Ghat Goats',
     subtitle: 'Livestock Farming',
-    video: '/12339388_1920_1080_25fps.mp4',
+    video: '/videos/goats.mp4',
     color: '#2a0d1a',
     accent: '#f7b731',
     emoji: '🐐',
@@ -108,7 +109,7 @@ const programData = {
   'tamarind-grove': {
     title: 'Tamarind Grove',
     subtitle: 'Agroforestry ',
-    video: '/17263107-hd_1080_1920_60fps.mp4',
+    video: '/videos/tamarind-grove.mp4',
     color: '#1a0d02',
     accent: '#e17055',
     emoji: '🌳',
@@ -142,7 +143,7 @@ const programData = {
   'tassar-fashion': {
     title: 'Tassar Fashion',
     subtitle: 'Rural Textile & Fashion Development',
-    video: '/15838333_1920_1080_60fps.mp4',
+    video: '/videos/tassar-fashion.mp4',
     color: '#2d142c',
     accent: '#ff7675',
     emoji: '🧵',
@@ -176,7 +177,7 @@ const programData = {
   'mega-poultry': {
     title: 'The Poultry Reserve',
     subtitle: 'Poultry Farming & Livelihood Generation',
-    video: '/10998151-uhd_3840_2160_30fps.mp4',
+    video: '/videos/mega-poultry.mp4',
     color: '#0d2030',
     accent: '#00cec9',
     emoji: '🐣',
@@ -210,7 +211,7 @@ const programData = {
   'tribey-coffee': {
     title: 'Tribey Coffee',
     subtitle: 'tribey coffee cultivation',
-    video: '/coffee.mp4',
+    video: '/videos/coffee.mp4',
     color: '#1a100a',
     accent: '#c09067',
     emoji: '☕',
@@ -264,11 +265,9 @@ export default function ProgramPage() {
 
       {/* ── HERO ── */}
       <section className="pg-hero" ref={heroRef}>
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
+        <LazyVideo
+          eager
+          src={p.video}
           style={{
             position: "absolute",
             inset: 0,
@@ -277,9 +276,7 @@ export default function ProgramPage() {
             objectFit: "cover",
             zIndex: 0
           }}
-        >
-          <source src={p.video} type="video/mp4" />
-        </video>
+        />
 
         <div
           style={{

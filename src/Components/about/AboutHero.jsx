@@ -1,16 +1,14 @@
 import { motion } from 'framer-motion'
+import LazyVideo from '../Common/LazyVideo'
 
 export default function AboutHero() {
   return (
     <section className="about-hero">
       <div className="about-hero__media">
-        <video
+        <LazyVideo
+          eager
           className="about-hero__video"
-          src="/19848528-uhd_3840_2160_24fps.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
+          src="/videos/forest.mp4"
         />
       </div>
       <div className="about-hero__overlay" />

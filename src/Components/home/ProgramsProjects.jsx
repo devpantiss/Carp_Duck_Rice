@@ -3,6 +3,7 @@ import Slider from 'react-slick'
 
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
+import LazyVideo from '../Common/LazyVideo'
 
 const programs = [
   {
@@ -15,7 +16,7 @@ const programs = [
     stat: '12,000+',
     statLabel: 'Fishers Supported',
     emoji: '🐟',
-    video: '/16490647-hd_1920_1080_60fps.mp4',
+    video: '/videos/pondy-fish.mp4',
     desc: 'Reviving traditional aquaculture and restoring native coastal wetlands through community cooperatives.',
     secondaryDesc: 'Empowering local fishing families with modern organic aquaculture tools and direct market access.'
   },
@@ -29,7 +30,7 @@ const programs = [
     stat: '8,400',
     statLabel: 'Acres Cultivated',
     emoji: '🌿',
-    video: '/WhatsApp Video 2026-06-03 at 17.39.43.mp4',
+    video: '/videos/guavas.mp4',
     desc: 'Transforming smallholder farms into high-yield multi-layered food forests and sustainable fruit orchards.',
     secondaryDesc: 'Improving crop resilience and restoring soil health across thousands of agricultural families.'
   },
@@ -43,7 +44,7 @@ const programs = [
     stat: '3,200',
     statLabel: 'Goats Raised',
     emoji: '🐐',
-    video: '/12339388_1920_1080_25fps.mp4',
+    video: '/videos/goats.mp4',
     desc: 'Securing critical tribal safety nets and income stability through scientific rotational livestock grazing.',
     secondaryDesc: 'Providing year-round livelihood buffers and community-managed veterinary support networks.'
   },
@@ -57,7 +58,7 @@ const programs = [
     stat: '5,600',
     statLabel: 'Trees Cultivated',
     emoji: '🌳',
-    video: '/17263107-hd_1080_1920_60fps.mp4',
+    video: '/videos/tamarind-grove.mp4',
     desc: 'Building drought-resistant microclimates and establishing high-margin tribal processing hubs.',
     secondaryDesc: 'Restoring dryland soils while enabling women-led processing self-help groups.'
   },
@@ -71,7 +72,7 @@ const programs = [
     stat: '1,500+',
     statLabel: 'Artisans Supported',
     emoji: '🧵',
-    video: '/15838333_1920_1080_60fps.mp4',
+    video: '/videos/tassar-fashion.mp4',
     desc: 'Empowering handloom weavers by scaling organic heritage silk crafts to premium international fashion markets.',
     secondaryDesc: 'Revitalizing traditional silk ikat craft cooperatives with solar-powered handloom centers.'
   },
@@ -85,7 +86,7 @@ const programs = [
     stat: '2,200+',
     statLabel: 'Poultry Farms Setup',
     emoji: '🐣',
-    video: '/10998151-uhd_3840_2160_30fps.mp4',
+    video: '/videos/mega-poultry.mp4',
     desc: 'Securing secondary household cash flow and combating local malnutrition with high-productivity backyard coops.',
     secondaryDesc: 'Providing landless rural families with stable daily protein sources and cooperative pricing power.'
   },
@@ -99,7 +100,7 @@ const programs = [
     stat: '4,500+',
     statLabel: 'Farmers Engaged',
     emoji: '☕',
-    video: '/coffee.mp4',
+    video: '/videos/coffee.mp4',
     desc: 'Cultivating premium shade-grown Arabica coffee under native forest canopies with tribal farmer cooperatives.',
     secondaryDesc: 'Enabling direct-trade market pathways and local processing centers managed entirely by community groups.'
   }
@@ -129,12 +130,8 @@ function ProgramSlide({ program, index }) {
   return (
     <div className="p-slide" style={{ '--ca': program.accent }}>
       {/* Background autoplay loop video */}
-      <video
+      <LazyVideo
         src={program.video}
-        autoPlay
-        muted
-        loop
-        playsInline
         className="p-slide__video"
       />
 

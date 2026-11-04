@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
+import LazyVideo from '../Common/LazyVideo'
 
 const visitInfo = [
   {
@@ -36,23 +37,15 @@ export default function VisitSection() {
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 1.0 }}
         >
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
+          <LazyVideo
+            src="/videos/forest.mp4"
             style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',
               display: 'block',
             }}
-          >
-            <source
-              src="/19848528-uhd_3840_2160_24fps.mp4"
-              type="video/mp4"
-            />
-          </video>
+          />
         </motion.div>
 
         <div className="visit__info">

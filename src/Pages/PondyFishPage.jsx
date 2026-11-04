@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useInView } from 'react-intersection-observer'
+import LazyVideo from '../Components/Common/LazyVideo'
 
 export default function PondyFishPage() {
   const { ref: originRef, inView: originIn } = useInView({ triggerOnce: true, threshold: 0.15 })
@@ -11,7 +12,7 @@ export default function PondyFishPage() {
     <div className="program-detail pondy-fish-page">
       {/* Hero Section */}
       <section className="detail-hero">
-        <video src="/16490647-hd_1920_1080_60fps.mp4" autoPlay muted loop playsInline />
+        <LazyVideo eager src="/videos/pondy-fish.mp4" />
         <div className="detail-hero__overlay" />
         <div className="container detail-hero__content">
           <Link to="/what-we-do" className="back-link">
@@ -114,7 +115,7 @@ export default function PondyFishPage() {
               transition={{ duration: 0.8 }}
               className="detail-graphic"
             >
-              <img src="/pondy_fish_5.jpg" alt="Thriving Aquaculture" className="impact-img" />
+              <img loading="lazy" decoding="async" src="/images/programs/pondy-fish-5.jpg" alt="Thriving Aquaculture" className="impact-img" />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 30 }}

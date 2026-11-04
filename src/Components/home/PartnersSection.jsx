@@ -4,27 +4,27 @@ import { useInView } from 'react-intersection-observer'
 const partners = [
   {
     name: 'National Skill Development Corporation (NSDC)',
-    logo: '/NSDC-Preview-removebg-preview_ztn40e.jpg'
+    logo: '/images/partners/nsdc.png'
   },
   {
     name: 'Logistics Skill Council (LSC)',
-    logo: '/LSC-logo-300x138-removebg-preview_fefyvr.jpg'
+    logo: '/images/partners/lsc.png'
   },
   {
     name: 'Rubber, Chemical & Petrochemical Skill Development Council',
-    logo: '/RCPSDC_ag2fwu.jpg'
+    logo: '/images/partners/rcpsdc.png'
   },
   {
     name: 'University Grants Commission (UGC)',
-    logo: '/UGC-removebg-preview_l5xzoo.jpg'
+    logo: '/images/partners/ugc.png'
   },
   {
     name: 'Skill Council for Mining Sector (SCMS)',
-    logo: '/SCMS_ehl7t2.jpg'
+    logo: '/images/partners/scms.png'
   },
   {
     name: 'Management & Entrepreneurship and Professional Skills Council (MEPSC)',
-    logo: '/mepsc-png-cropped_1_rquk2z.jpg'
+    logo: '/images/partners/mepsc.png'
   }
 ]
 
@@ -104,7 +104,7 @@ export default function PartnersSection() {
               >
                 {/* Logo Wrapper */}
                 <div className="partner-logo-circle">
-                  <img className="partner-logo-img" src={partner.logo} alt={`${partner.name} logo`} />
+                  <img loading="lazy" decoding="async" className="partner-logo-img" src={partner.logo} alt={`${partner.name} logo`} />
                 </div>
                 <span className="partner-logo-name">{partner.name}</span>
               </div>

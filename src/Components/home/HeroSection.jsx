@@ -1,20 +1,15 @@
-import { useRef } from "react";
 import { motion } from "framer-motion";
+import LazyVideo from "../Common/LazyVideo";
 
 export default function HeroSection() {
-  const videoRef = useRef(null);
 
   return (
     <section className="hero-sec">
       {/* Fixed Viewport Background Video Container — Scoped strictly to Hero section via clip-path */}
       <div className="hero-fixed-video-container">
-        <video
-          ref={videoRef}
-          src="/WhatsApp Video 2026-06-04 at 23.06.24.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
+        <LazyVideo
+          eager
+          src="/videos/home-hero.mp4"
           className="hero-fixed-video"
         />
 

@@ -34,7 +34,7 @@ export default function Navbar() {
         {/* ── Official Livelihood Park Logo ── */}
         <Link to="/" className="navbar__logo">
           <img
-            src="/logo-horizontal.png"
+            src="/images/brand/logo-horizontal.png"
             alt="Carp, Rice & Duck Livelihood Park"
             className="navbar__logo-img"
           />

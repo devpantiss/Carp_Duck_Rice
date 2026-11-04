@@ -18,7 +18,7 @@ function ParkHero() {
     <section className="park-hero" ref={ref}>
       <motion.div className="park-hero__bg" style={{ y: bgY }}>
         <motion.img
-          src="/park_hero.png"
+          src="/images/backgrounds/park-hero.jpg"
           alt="Carp Duck Rice Park landscape"
           initial={{ scale: 1.15, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

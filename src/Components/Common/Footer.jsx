@@ -31,8 +31,8 @@ export default function Footer() {
               transition={{ duration: 0.8 }}
             >
               <div className="footer__logo">
-                <img
-                  src="/logo-horizontal.png"
+                <img loading="lazy" decoding="async"
+                  src="/images/brand/logo-horizontal.png"
                   alt="Carp, Rice & Duck Livelihood Park"
                   className="footer__logo-img"
                 />

@@ -133,7 +133,7 @@ export default function ProgramsView({ activeProgramId, onNavigateToProgram }) {
               </div>
 
               {/* Hero */}
-              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(26, 82, 118, 0.85) 0%, rgba(20, 143, 119, 0.75) 100%), url("/pondy_fish_1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
+              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(26, 82, 118, 0.85) 0%, rgba(20, 143, 119, 0.75) 100%), url("/images/programs/pondy-fish-1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
                 <div style={{ zIndex: 2 }}>
                   <span className="banner-eyebrow" style={{ color: 'rgba(255,255,255,0.8)' }}>AQUACULTURE CENTER</span>
                   <h1 style={{ color: 'white', fontSize: '38px', margin: '6px 0 0 0', fontWeight: 300 }}>Pondy Fish Operations</h1>
@@ -227,7 +227,7 @@ export default function ProgramsView({ activeProgramId, onNavigateToProgram }) {
           {/* 2. DUCK HABITAT DASHBOARD */}
           {selectedProgram === 'duck-habitat' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(20, 143, 119, 0.85) 0%, rgba(30, 132, 73, 0.75) 100%), url("/mega_poultry_1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
+              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(20, 143, 119, 0.85) 0%, rgba(30, 132, 73, 0.75) 100%), url("/images/programs/mega-poultry-1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
                 <div>
                   <span className="banner-eyebrow" style={{ color: 'rgba(255,255,255,0.8)' }}>POULTRY & WETLAND RESERVE</span>
                   <h1 style={{ color: 'white', fontSize: '38px', margin: '6px 0 0 0', fontWeight: 300 }}>Duck Habitat Command</h1>
@@ -337,7 +337,7 @@ export default function ProgramsView({ activeProgramId, onNavigateToProgram }) {
           {/* 3. RICE ECOLOGY DASHBOARD */}
           {selectedProgram === 'rice-ecology' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(30, 132, 73, 0.85) 0%, rgba(212, 172, 13, 0.75) 100%), url("/rice.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
+              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(30, 132, 73, 0.85) 0%, rgba(212, 172, 13, 0.75) 100%), url("/images/concept/rice.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
                 <div>
                   <span className="banner-eyebrow" style={{ color: 'rgba(255,255,255,0.8)' }}>INTEGRATED AGRO-ECOLOGY</span>
                   <h1 style={{ color: 'white', fontSize: '38px', margin: '6px 0 0 0', fontWeight: 300 }}>Rice Field Ecology Hub</h1>
@@ -437,7 +437,7 @@ export default function ProgramsView({ activeProgramId, onNavigateToProgram }) {
           {/* 4. GOAT FARM DASHBOARD */}
           {selectedProgram === 'ghats-goat' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(120, 66, 18, 0.85) 0%, rgba(212, 172, 13, 0.75) 100%), url("/goats_1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
+              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(120, 66, 18, 0.85) 0%, rgba(212, 172, 13, 0.75) 100%), url("/images/programs/goats-1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
                 <div>
                   <span className="banner-eyebrow" style={{ color: 'rgba(255,255,255,0.8)' }}>LIVESTOCK COOPERATIVE</span>
                   <h1 style={{ color: 'white', fontSize: '38px', margin: '6px 0 0 0', fontWeight: 300 }}>Eastern Ghats Goat Farm</h1>
@@ -532,7 +532,7 @@ export default function ProgramsView({ activeProgramId, onNavigateToProgram }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
               
               {/* Dark Obsidian Hero */}
-              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(92, 62, 33, 0.9) 100%), url("/coffee_2.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(92, 62, 33, 0.9) 100%), url("/images/programs/coffee-2.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <div>
                   <span className="banner-eyebrow" style={{ color: 'rgba(212,172,13,0.85)' }}>ORGANIC AGROFORESTRY VALUE LOOP</span>
                   <h1 style={{ color: 'white', fontSize: '38px', margin: '6px 0 0 0', fontWeight: 300 }}>TRIBEY COFFEE PROCESSING</h1>
@@ -649,7 +649,7 @@ export default function ProgramsView({ activeProgramId, onNavigateToProgram }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
               
               {/* Golden luxury banner */}
-              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(212, 172, 13, 0.9) 0%, rgba(240, 230, 211, 0.8) 100%), url("/tassar_fashion_2.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px', border: '1px solid rgba(212,172,13,0.3)' }}>
+              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(212, 172, 13, 0.9) 0%, rgba(240, 230, 211, 0.8) 100%), url("/images/programs/tassar-fashion-2.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px', border: '1px solid rgba(212,172,13,0.3)' }}>
                 <div>
                   <span className="banner-eyebrow" style={{ color: 'var(--text-dark)' }}>HERITAGE WEAVING COOPERATIVE</span>
                   <h1 style={{ color: 'var(--text-dark)', fontSize: '38px', margin: '6px 0 0 0', fontWeight: 400, fontFamily: 'var(--font-display)' }}>Tassar Silk Fashion Center</h1>
@@ -753,7 +753,7 @@ export default function ProgramsView({ activeProgramId, onNavigateToProgram }) {
           {/* 7. TAMARIND GROVE DASHBOARD */}
           {selectedProgram === 'tamarind-grove' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(30, 132, 73, 0.85) 0%, rgba(20, 143, 119, 0.75) 100%), url("/tamarind_grove_1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
+              <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(30, 132, 73, 0.85) 0%, rgba(20, 143, 119, 0.75) 100%), url("/images/programs/tamarind-grove-1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
                 <div>
                   <span className="banner-eyebrow" style={{ color: 'rgba(255,255,255,0.8)' }}>AGROFORESTRY FORESTRY CANOPY</span>
                   <h1 style={{ color: 'white', fontSize: '38px', margin: '6px 0 0 0', fontWeight: 300 }}>Tamarind Grove Processing</h1>

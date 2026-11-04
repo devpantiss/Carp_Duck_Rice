@@ -7,17 +7,17 @@ export default function PoultryReserveView() {
   const [nestAlert, setNestAlert] = useState(false)
 
   const galleryImages = [
-    '/mega_poultry_1.jpg',
-    '/mega_poultry_2.jpg',
-    '/mega_poultry_3.jpg',
-    '/mega_poultry_4.jpg'
+    '/images/programs/mega-poultry-1.jpg',
+    '/images/programs/mega-poultry-2.jpg',
+    '/images/programs/mega-poultry-3.jpg',
+    '/images/programs/mega-poultry-4.jpg'
   ]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       
       {/* Hero */}
-      <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(20, 143, 119, 0.85) 0%, rgba(30, 132, 73, 0.75) 100%), url("/mega_poultry_1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
+      <div className="welcome-banner" style={{ background: 'linear-gradient(135deg, rgba(20, 143, 119, 0.85) 0%, rgba(30, 132, 73, 0.75) 100%), url("/images/programs/mega-poultry-1.jpg") no-repeat center center / cover', height: '220px', display: 'flex', alignItems: 'flex-end', padding: '36px' }}>
         <div>
           <span className="banner-eyebrow" style={{ color: 'rgba(255,255,255,0.85)', letterSpacing: '0.2em' }}>POULTRY &amp; WETLAND RESOURCE LOOP</span>
           <h1 style={{ color: 'white', fontSize: '38px', margin: '4px 0 0 0', fontWeight: 300, fontFamily: 'var(--font-display)' }}>The Poultry Reserve Command</h1>
@@ -97,7 +97,7 @@ export default function PoultryReserveView() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           {galleryImages.map((src, i) => (
             <div key={i} style={{ height: '110px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.06)' }}>
-              <img src={src} alt="Poultry reserve gallery" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} className="gallery-hover-zoom" />
+              <img loading="lazy" decoding="async" src={src} alt="Poultry reserve gallery" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} className="gallery-hover-zoom" />
             </div>
           ))}
         </div>
