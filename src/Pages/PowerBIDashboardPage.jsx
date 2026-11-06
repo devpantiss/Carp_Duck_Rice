@@ -1,473 +1,626 @@
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { FiArrowLeft, FiMaximize2, FiMinimize2, FiRefreshCw, FiExternalLink, FiBarChart2, FiCheckCircle } from 'react-icons/fi'
+import { motion as Motion } from 'framer-motion'
+import { FiArrowLeft, FiMaximize2, FiX, FiRefreshCw, FiExternalLink, FiSmartphone, FiBarChart2 } from 'react-icons/fi'
 
-export const POWERBI_CONFIG = {
+// Power BI "Publish to web" reports. Their contents are owned and styled in Power BI;
+// this page controls only the framing around them.
+// Highlights are copied from each report's home page — update them when the report changes.
+const POWERBI_CONFIG = {
   'pondy-fish': {
     id: 'pondy-fish',
-    title: 'Pondy Fish Live PowerBI Analytics',
-    subtitle: 'Real-time telemetry, aquaculture yield, water quality index & coastal community impact',
+    name: 'Pondy Fish',
+    reportName: 'Fishery Monitoring Dashboard',
     tag: 'Sustainable Fisheries',
-    emoji: '🐟',
-    stat: '12,000+',
-    statLabel: 'Fishers Supported',
-    accent: '#4ecdc4',
-    url: 'https://app.powerbi.com/view?r=eyJrIjoiZmJmZDU5NjItYjk5ZS00MjYwLWIwMTktOGM1MTQ4NmE4OTczIiwidCI6IjQ4NGVhM2IxLTU0YjYtNDhkYi04YzZhLWZkN2IyNWRhYzI1ZiJ9&pageName=ReportSection'
+    summary: 'Pond coverage, production, profitability, risk tracking and training across the fishery livelihood programme.',
+    accent: '#1f7a9c',
+    highlights: [
+      { value: '60', label: 'Fishery farmers' },
+      { value: '75', label: 'Ponds covered' },
+      { value: '2M', label: 'Fish produced' },
+      { value: '57K', label: 'Cumulative profit' },
+    ],
+    snapshot: 'Nov 2026',
+    url: 'https://app.powerbi.com/view?r=eyJrIjoiZmJmZDU5NjItYjk5ZS00MjYwLWIwMTktOGM1MTQ4NmE4OTczIiwidCI6IjQ4NGVhM2IxLTU0YjYtNDhkYi04YzZhLWZkN2IyNWRhYzI1ZiJ9&pageName=ReportSection',
   },
   'easternghats-goat': {
     id: 'easternghats-goat',
-    title: 'Eastern Ghats Goats Live PowerBI Analytics',
-    subtitle: 'Livestock census, rotational pasture tracking, doe fertility & tribal safety net statistics',
+    name: 'Eastern Ghats Goats',
+    reportName: 'Goatery Monitoring Dashboard',
     tag: 'Livestock Farming',
-    emoji: '🐐',
-    stat: '3,200',
-    statLabel: 'Goats Raised',
-    accent: '#f7b731',
-    url: 'https://app.powerbi.com/view?r=eyJrIjoiOThjMTNjMjgtYzA0MC00Y2FkLTllZGMtNzRjMzFkYmY3YTU1IiwidCI6IjQ4NGVhM2IxLTU0YjYtNDhkYi04YzZhLWZkN2IyNWRhYzI1ZiJ9&pageName=ReportSection'
+    summary: 'Household coverage, producer groups, infrastructure readiness, goat health cards, training and gap tracking.',
+    accent: '#bf7e37',
+    highlights: [
+      { value: '1,000', label: 'Households covered' },
+      { value: '14 / 20', label: 'Producer groups formed' },
+      { value: '650', label: 'Goat health cards' },
+      { value: '546', label: 'Farmers trained' },
+    ],
+    snapshot: 'Nov 2026',
+    url: 'https://app.powerbi.com/view?r=eyJrIjoiOThjMTNjMjgtYzA0MC00Y2FkLTllZGMtNzRjMzFkYmY3YTU1IiwidCI6IjQ4NGVhM2IxLTU0YjYtNDhkYi04YzZhLWZkN2IyNWRhYzI1ZiJ9&pageName=ReportSection',
   },
-  // Alias for Dashboard compatibility
-  'ghats-goat': {
-    id: 'easternghats-goat',
-    title: 'Eastern Ghats Goats Live PowerBI Analytics',
-    subtitle: 'Livestock census, rotational pasture tracking, doe fertility & tribal safety net statistics',
-    tag: 'Livestock Farming',
-    emoji: '🐐',
-    stat: '3,200',
-    statLabel: 'Goats Raised',
-    accent: '#f7b731',
-    url: 'https://app.powerbi.com/view?r=eyJrIjoiOThjMTNjMjgtYzA0MC00Y2FkLTllZGMtNzRjMzFkYmY3YTU1IiwidCI6IjQ4NGVhM2IxLTU0YjYtNDhkYi04YzZhLWZkN2IyNWRhYzI1ZiJ9&pageName=ReportSection'
+}
+// Older links use this id.
+POWERBI_CONFIG['ghats-goat'] = POWERBI_CONFIG['easternghats-goat']
+
+const PROGRAM_TABS = ['pondy-fish', 'easternghats-goat']
+
+// Measured: both reports are 16:9 pages, and Power BI adds a fixed 60px zoom + footer bar below.
+// The iframe is made 60px taller than the visible stage so that bar sits outside the crop.
+const REPORT_RATIO = 16 / 9
+const POWERBI_CHROME_PX = 60
+const OVERSCAN_PX = 4
+const SETTLE_MS = 1400 // the report shell loads before its visuals finish rendering
+const SLOW_MS = 20000
+
+function ReportStage({ config }) {
+  const [status, setStatus] = useState('loading') // loading | ready | slow
+  const settleTimer = useRef(0)
+
+  useEffect(() => {
+    const slow = setTimeout(() => setStatus((s) => (s === 'loading' ? 'slow' : s)), SLOW_MS)
+    const settle = settleTimer.current
+    return () => {
+      clearTimeout(slow)
+      clearTimeout(settle)
+    }
+  }, [])
+
+  const handleLoad = () => {
+    settleTimer.current = setTimeout(() => setStatus('ready'), SETTLE_MS)
   }
+
+  return (
+    <div className="pbi-stage" style={{ '--accent': config.accent }}>
+      <iframe
+        title={`${config.name} — ${config.reportName}`}
+        src={config.url}
+        className="pbi-iframe"
+        onLoad={handleLoad}
+        allow="fullscreen"
+      />
+      {status !== 'ready' && (
+        <div className={`pbi-loader${status === 'slow' ? ' pbi-loader--slow' : ''}`} role="status" aria-live="polite">
+          <div className="pbi-loader__skeleton" aria-hidden="true">
+            <span /><span /><span /><span />
+          </div>
+          {status === 'slow' ? (
+            <div className="pbi-loader__msg">
+              <p>The report is taking longer than usual to load.</p>
+              <a href={config.url} target="_blank" rel="noopener noreferrer" className="pbi-btn pbi-btn--accent">
+                Open report in a new tab <FiExternalLink />
+              </a>
+            </div>
+          ) : (
+            <p className="pbi-loader__label">Loading the Power BI report…</p>
+          )}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function PowerBIDashboardPage() {
   const { programId } = useParams()
   const navigate = useNavigate()
-  
-  // Resolve active program or default to pondy-fish
-  const activeKey = (programId && POWERBI_CONFIG[programId]) ? programId : 'pondy-fish'
-  const currentConfig = POWERBI_CONFIG[activeKey] || POWERBI_CONFIG['pondy-fish']
+  const config = POWERBI_CONFIG[programId] || POWERBI_CONFIG['pondy-fish']
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [iframeKey, setIframeKey] = useState(0)
+  const [reloadKey, setReloadKey] = useState(0)
+  const [expanded, setExpanded] = useState(false)
+  const shellRef = useRef(null)
+
+  const exitExpanded = useCallback(() => {
+    setExpanded(false)
+    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
+  }, [])
+
+  const enterExpanded = () => {
+    setExpanded(true)
+    // Native fullscreen where supported (desktop, Android); iPhone falls back to the CSS overlay.
+    const el = shellRef.current
+    if (el?.requestFullscreen) {
+      el.requestFullscreen()
+        .then(() => screen.orientation?.lock?.('landscape'))
+        .catch(() => {})
+    }
+  }
 
   useEffect(() => {
-    setIsLoading(true)
-  }, [activeKey])
-
-  const handleRefresh = () => {
-    setIsLoading(true)
-    setIframeKey((prev) => prev + 1)
-  }
-
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen)
-  }
+    if (!expanded) return
+    const onKey = (e) => e.key === 'Escape' && exitExpanded()
+    const onFsChange = () => !document.fullscreenElement && setExpanded(false)
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('fullscreenchange', onFsChange)
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('fullscreenchange', onFsChange)
+      document.body.style.overflow = overflow
+    }
+  }, [expanded, exitExpanded])
 
   return (
-    <motion.main
-      className="powerbi-page-wrapper"
-      initial={{ opacity: 0, y: 15 }}
+    <Motion.main
+      className="pbi-page"
+      style={{ '--accent': config.accent }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="powerbi-container">
-        
-        {/* Navigation & Header */}
-        <header className="powerbi-header">
-          <div className="powerbi-header__top">
-            <button onClick={() => navigate(-1)} className="powerbi-back-btn">
-              <FiArrowLeft /> <span>Back</span>
-            </button>
+      <div className="pbi-wash" aria-hidden="true" />
+      <div className="pbi-container">
+        <div className="pbi-topbar">
+          <button type="button" onClick={() => navigate(-1)} className="pbi-back">
+            <FiArrowLeft aria-hidden="true" /> <span>Back</span>
+          </button>
+          <nav className="pbi-switcher" aria-label="Programme dashboards">
+            {PROGRAM_TABS.map((id) => {
+              const item = POWERBI_CONFIG[id]
+              const active = config.id === id
+              return (
+                <Link
+                  key={id}
+                  to={`/dashboard/powerbi/${id}`}
+                  className={`pbi-switcher__tab${active ? ' is-active' : ''}`}
+                  style={{ '--tab-accent': item.accent }}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  <i aria-hidden="true" />
+                  {item.name}
+                </Link>
+              )
+            })}
+          </nav>
+        </div>
 
-            {/* Program Switcher Pills */}
-            <div className="powerbi-switcher">
-              <Link
-                to="/dashboard/powerbi/pondy-fish"
-                className={`powerbi-tab ${currentConfig.id === 'pondy-fish' ? 'powerbi-tab--active' : ''}`}
-                style={{ '--accent': '#4ecdc4' }}
-              >
-                <span>🐟</span> Pondy Fish Dashboard
-              </Link>
-              <Link
-                to="/dashboard/powerbi/easternghats-goat"
-                className={`powerbi-tab ${currentConfig.id === 'easternghats-goat' ? 'powerbi-tab--active' : ''}`}
-                style={{ '--accent': '#f7b731' }}
-              >
-                <span>🐐</span> Eastern Ghat Goats Dashboard
-              </Link>
-            </div>
-
-            {/* Live Indicator & Quick Actions */}
-            <div className="powerbi-actions">
-              <span className="powerbi-live-badge">
-                <span className="powerbi-live-dot" /> POWERBI LIVE
-              </span>
-              <button onClick={handleRefresh} className="powerbi-action-btn" title="Refresh Dashboard">
-                <FiRefreshCw className={isLoading ? 'spin' : ''} />
-              </button>
-              <button onClick={toggleFullscreen} className="powerbi-action-btn" title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen View'}>
-                {isFullscreen ? <FiMinimize2 /> : <FiMaximize2 />}
-              </button>
-              <a
-                href={currentConfig.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="powerbi-action-btn"
-                title="Open in PowerBI Site"
-              >
-                <FiExternalLink />
-              </a>
-            </div>
-          </div>
-
-          <div className="powerbi-header__title-block">
-            <div className="powerbi-header__eyebrow">
-              <span className="powerbi-header__tag" style={{ color: currentConfig.accent }}>
-                {currentConfig.emoji} {currentConfig.tag}
-              </span>
-              <span className="powerbi-header__divider">•</span>
-              <span>ENTERPRISE TELEMETRY</span>
-            </div>
-            <h1 className="powerbi-header__title">{currentConfig.title}</h1>
-            <p className="powerbi-header__subtitle">{currentConfig.subtitle}</p>
-          </div>
+        <header className="pbi-header">
+          <p className="pbi-eyebrow">
+            <i aria-hidden="true" /> {config.tag} · Power BI dashboard
+          </p>
+          <h1 className="pbi-title">
+            {config.name} <em>{config.reportName}</em>
+          </h1>
+          <p className="pbi-summary">{config.summary}</p>
         </header>
 
-        {/* Dashboard Viewer Area */}
-        <div className={`powerbi-viewer-card ${isFullscreen ? 'powerbi-viewer-card--fullscreen' : ''}`}>
-          
-          {/* Top Bar for frame */}
-          <div className="powerbi-frame-bar">
-            <div className="powerbi-frame-dots">
-              <span style={{ background: '#ff5f56' }} />
-              <span style={{ background: '#ffbd2e' }} />
-              <span style={{ background: '#27c93f' }} />
-            </div>
-            <div className="powerbi-frame-title">
-              <FiBarChart2 style={{ color: currentConfig.accent }} />
-              <span>Microsoft PowerBI Report — {currentConfig.title}</span>
-            </div>
-            <div className="powerbi-frame-status">
-              <FiCheckCircle style={{ color: '#27c93f' }} /> Secure SSL
-            </div>
+        <section className="pbi-highlights" aria-label="Highlights">
+          {config.highlights.map((item, i) => (
+            <Motion.div
+              key={item.label}
+              className="pbi-highlight"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+            </Motion.div>
+          ))}
+          <p className="pbi-highlights__note">Highlights from the report · {config.snapshot}</p>
+        </section>
+
+        <div className="pbi-toolbar">
+          <div className="pbi-toolbar__info">
+            <span className="pbi-badge">
+              <FiBarChart2 aria-hidden="true" /> Live Power BI report
+            </span>
+            <p className="pbi-toolbar__hint">Use the tabs inside the report to explore each section.</p>
           </div>
-
-          {/* Loading Overlay */}
-          {isLoading && (
-            <div className="powerbi-loader-overlay">
-              <div className="powerbi-loader-spinner" style={{ borderTopColor: currentConfig.accent }} />
-              <p>Loading PowerBI Analytics Dashboard...</p>
-            </div>
-          )}
-
-          {/* Embedded PowerBI Iframe */}
-          <div className="powerbi-iframe-wrapper">
-            <iframe
-              key={iframeKey}
-              title={currentConfig.title}
-              src={currentConfig.url}
-              className="powerbi-iframe"
-              onLoad={() => setIsLoading(false)}
-              allowFullScreen={true}
-            />
+          <div className="pbi-toolbar__actions">
+            <button type="button" className="pbi-icon-btn" onClick={() => setReloadKey((k) => k + 1)} aria-label="Reload report" title="Reload report">
+              <FiRefreshCw />
+            </button>
+            <button type="button" className="pbi-icon-btn" onClick={enterExpanded} aria-label="View full screen" title="View full screen">
+              <FiMaximize2 />
+            </button>
+            <a href={config.url} target="_blank" rel="noopener noreferrer" className="pbi-icon-btn" aria-label="Open report in a new tab" title="Open in a new tab">
+              <FiExternalLink />
+            </a>
           </div>
         </div>
 
+        <button type="button" className="pbi-mobile-hint" onClick={enterExpanded}>
+          <FiSmartphone aria-hidden="true" />
+          <span>Tap to view the report full screen in landscape</span>
+        </button>
+
+        <div ref={shellRef} className={`pbi-shell${expanded ? ' is-expanded' : ''}`}>
+          {expanded && (
+            <button type="button" className="pbi-close" onClick={exitExpanded} aria-label="Exit full screen">
+              <FiX />
+            </button>
+          )}
+          <ReportStage key={`${config.id}-${reloadKey}`} config={config} />
+        </div>
+
+        <p className="pbi-footnote">
+          This dashboard is built and published by the programme team in Microsoft Power BI. New data can take up to an hour to appear here.
+        </p>
       </div>
 
       <style>{`
-        .powerbi-page-wrapper {
-          min-height: 100vh;
-          background: #0a0c10;
-          color: #ffffff;
-          padding-top: 100px;
-          padding-bottom: 80px;
+        /* Same palette as the Reports page: warm paper, deep green ink, glass cards. */
+        .pbi-page {
+          --ink: #18312e;
+          --paper: #f6f1e7;
+          --green: #1b8066;
+          --deep: #143f38;
+          --line: rgba(24,49,46,0.12);
+          --muted: #5f6f69;
           position: relative;
+          isolation: isolate;
+          overflow: hidden;
+          min-height: 100vh;
+          background: var(--paper);
+          color: var(--ink);
+          padding: 112px 0 88px;
+          font-family: var(--font-body);
         }
-
-        .powerbi-container {
-          max-width: 1520px;
+        .pbi-wash {
+          position: absolute;
+          z-index: -1;
+          inset: 0;
+          pointer-events: none;
+          background:
+            radial-gradient(circle at 8% 10%, rgba(151,211,180,0.34), transparent 24%),
+            radial-gradient(circle at 94% 30%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 26%),
+            repeating-linear-gradient(15deg, rgba(89,68,37,0.025) 0 1px, transparent 1px 7px);
+        }
+        .pbi-container {
+          width: min(1440px, 100%);
           margin: 0 auto;
           padding: 0 clamp(16px, 3vw, 40px);
         }
 
-        .powerbi-header {
-          margin-bottom: 28px;
-        }
-
-        .powerbi-header__top {
+        /* top bar */
+        .pbi-topbar {
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 16px;
           flex-wrap: wrap;
-          margin-bottom: 24px;
+          margin-bottom: clamp(28px, 4vw, 44px);
         }
-
-        .powerbi-back-btn {
+        .pbi-back {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          color: #ffffff;
-          padding: 8px 18px;
-          border-radius: 99px;
-          font-size: 13px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-        .powerbi-back-btn:hover {
-          background: rgba(255, 255, 255, 0.15);
-          transform: translateX(-3px);
-        }
-
-        .powerbi-switcher {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          background: rgba(255, 255, 255, 0.04);
-          padding: 4px;
-          border-radius: 14px;
-          border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .powerbi-tab {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 18px;
-          border-radius: 10px;
-          font-size: 13px;
-          font-weight: 500;
-          color: rgba(255, 255, 255, 0.7);
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-        .powerbi-tab:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.06);
-        }
-        .powerbi-tab--active {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.12);
-          border: 1px solid var(--accent);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .powerbi-actions {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .powerbi-live-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: rgba(39, 201, 63, 0.12);
-          border: 1px solid rgba(39, 201, 63, 0.3);
-          color: #27c93f;
-          padding: 6px 14px;
-          border-radius: 99px;
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.1em;
-        }
-
-        .powerbi-live-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: #27c93f;
-          box-shadow: 0 0 10px #27c93f;
-          animation: pulse-green 2s infinite;
-        }
-
-        @keyframes pulse-green {
-          0% { transform: scale(0.95); opacity: 0.8; }
-          50% { transform: scale(1.2); opacity: 1; }
-          100% { transform: scale(0.95); opacity: 0.8; }
-        }
-
-        .powerbi-action-btn {
-          width: 38px;
-          height: 38px;
-          border-radius: 10px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: rgba(255, 255, 255, 0.85);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-        .powerbi-action-btn:hover {
-          background: rgba(255, 255, 255, 0.15);
-          color: #ffffff;
-        }
-
-        .spin {
-          animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-          100% { transform: rotate(360deg); }
-        }
-
-        .powerbi-header__title-block {
-          margin-top: 10px;
-        }
-
-        .powerbi-header__eyebrow {
-          display: flex;
-          align-items: center;
-          gap: 10px;
+          padding: 10px 16px 10px 12px;
+          border-radius: 999px;
+          border: 1px solid var(--line);
+          background: rgba(255,255,255,0.5);
+          color: var(--ink);
+          font-family: inherit;
           font-size: 12px;
           font-weight: 700;
-          letter-spacing: 0.15em;
+          cursor: pointer;
+          transition: background 0.25s ease, color 0.25s ease;
+        }
+        .pbi-back:hover { background: var(--ink); color: #fff; }
+        .pbi-switcher {
+          display: inline-flex;
+          gap: 4px;
+          padding: 5px;
+          border-radius: 999px;
+          background: rgba(255,255,255,0.55);
+          border: 1px solid rgba(255,255,255,0.85);
+          box-shadow: 0 12px 30px rgba(26,37,47,0.07);
+          backdrop-filter: blur(14px);
+        }
+        .pbi-switcher__tab {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 9px 16px;
+          border-radius: 999px;
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--muted);
+          text-decoration: none;
+          white-space: nowrap;
+          transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+        }
+        .pbi-switcher__tab i {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: var(--tab-accent);
+        }
+        .pbi-switcher__tab:hover { color: var(--ink); }
+        .pbi-switcher__tab.is-active {
+          color: #fff;
+          background: linear-gradient(135deg, var(--deep), var(--green));
+          box-shadow: 0 8px 18px rgba(20,143,119,0.22);
+        }
+        .pbi-switcher__tab.is-active i { background: #fff; }
+
+        /* header */
+        .pbi-eyebrow {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin: 0 0 14px;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.2em;
           text-transform: uppercase;
-          margin-bottom: 8px;
+          color: var(--green);
         }
-
-        .powerbi-header__divider {
-          color: rgba(255, 255, 255, 0.2);
-        }
-
-        .powerbi-header__title {
-          font-family: var(--font-display, 'Bebas Neue', sans-serif);
-          font-size: clamp(28px, 4vw, 44px);
-          font-weight: 400;
-          letter-spacing: 0.02em;
-          margin: 0 0 8px 0;
-          color: #ffffff;
-        }
-
-        .powerbi-header__subtitle {
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.6);
+        .pbi-eyebrow i { width: 26px; height: 1px; background: var(--green); }
+        .pbi-title {
           margin: 0;
-          max-width: 800px;
-          font-weight: 300;
+          font-family: var(--font-display);
+          font-weight: 400;
+          font-size: clamp(2.6rem, 5.4vw, 4.8rem);
+          line-height: 0.98;
+          letter-spacing: -0.03em;
+        }
+        .pbi-title em {
+          display: block;
+          font-style: italic;
+          color: var(--accent);
+          font-size: 0.6em;
+          letter-spacing: -0.01em;
+          margin-top: 8px;
+        }
+        .pbi-summary {
+          max-width: 640px;
+          margin: 18px 0 0;
+          font-size: 15px;
+          line-height: 1.75;
+          color: var(--muted);
         }
 
-        /* Viewer Card */
-        .powerbi-viewer-card {
-          position: relative;
-          background: #11141b;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 16px;
-          overflow: hidden;
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-          transition: all 0.3s ease;
+        /* highlights: glass cards like the Reports page */
+        .pbi-highlights {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          margin: clamp(28px, 4vw, 40px) 0 0;
+        }
+        .pbi-highlight {
+          display: grid;
+          gap: 6px;
+          padding: 20px clamp(16px, 2vw, 24px);
+          border-radius: 20px;
+          background: rgba(255,255,255,0.56);
+          border: 1px solid rgba(255,255,255,0.88);
+          box-shadow: 0 14px 30px rgba(38,57,49,0.07);
+          backdrop-filter: blur(14px);
+        }
+        .pbi-highlight strong {
+          font-family: var(--font-display);
+          font-weight: 400;
+          font-size: clamp(2rem, 3.2vw, 2.7rem);
+          line-height: 1;
+          color: var(--ink);
+        }
+        .pbi-highlight span {
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--muted);
+        }
+        .pbi-highlights__note {
+          grid-column: 1 / -1;
+          margin: 2px 0 0;
+          font-size: 11px;
+          letter-spacing: 0.06em;
+          color: #7b8983;
         }
 
-        .powerbi-viewer-card--fullscreen {
-          position: fixed;
-          inset: 0;
-          z-index: 9999;
-          border-radius: 0;
-          border: none;
-        }
-
-        .powerbi-frame-bar {
+        /* toolbar */
+        .pbi-toolbar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 12px 20px;
-          background: rgba(0, 0, 0, 0.4);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-          font-size: 12px;
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .powerbi-frame-dots {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-        .powerbi-frame-dots span {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          display: inline-block;
-        }
-
-        .powerbi-frame-title {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-weight: 500;
-        }
-
-        .powerbi-frame-status {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 11px;
-          color: rgba(255, 255, 255, 0.5);
-        }
-
-        .powerbi-loader-overlay {
-          position: absolute;
-          inset: 44px 0 0 0;
-          background: rgba(10, 12, 16, 0.9);
-          backdrop-filter: blur(8px);
-          z-index: 10;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
           gap: 16px;
-          color: rgba(255, 255, 255, 0.8);
-          font-size: 14px;
+          margin: clamp(30px, 4vw, 44px) auto 14px;
+          max-width: calc((100svh - 150px) * 16 / 9);
         }
-
-        .powerbi-loader-spinner {
-          width: 42px;
-          height: 42px;
-          border: 3px solid rgba(255, 255, 255, 0.1);
+        .pbi-toolbar__info { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .pbi-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          padding: 7px 13px;
+          border-radius: 999px;
+          background: var(--deep);
+          color: #fff;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          white-space: nowrap;
+        }
+        .pbi-badge svg { color: #f2c811; font-size: 13px; }
+        .pbi-toolbar__hint { margin: 0; font-size: 12px; color: var(--muted); }
+        .pbi-toolbar__actions { display: flex; gap: 8px; }
+        .pbi-icon-btn {
+          width: 38px;
+          height: 38px;
+          display: grid;
+          place-items: center;
           border-radius: 50%;
-          animation: spin 0.8s linear infinite;
+          border: 1px solid var(--line);
+          background: rgba(255,255,255,0.55);
+          color: var(--ink);
+          cursor: pointer;
+          transition: background 0.25s ease, color 0.25s ease;
+        }
+        .pbi-icon-btn:hover { background: var(--ink); color: #fff; }
+        .pbi-icon-btn:focus-visible, .pbi-back:focus-visible, .pbi-switcher__tab:focus-visible, .pbi-mobile-hint:focus-visible {
+          outline: 2px solid var(--green);
+          outline-offset: 2px;
         }
 
-        .powerbi-iframe-wrapper {
+        /* report frame: a 16:9 window that crops Power BI's bottom bar */
+        .pbi-shell {
+          margin: 0 auto;
+          max-width: calc((100svh - 150px) * 16 / 9);
+          padding: 8px;
+          border-radius: 26px;
+          background: linear-gradient(145deg, var(--deep), #1d6b59);
+          box-shadow: 0 25px 70px rgba(29,47,42,0.2);
+        }
+        .pbi-stage {
           position: relative;
-          width: 100%;
-          height: clamp(650px, 78vh, 900px);
-          background: #ffffff;
+          aspect-ratio: ${REPORT_RATIO};
+          overflow: hidden;
+          border-radius: 19px;
+          background: #fff;
+          isolation: isolate;
         }
-
-        .powerbi-viewer-card--fullscreen .powerbi-iframe-wrapper {
-          height: calc(100vh - 44px);
-        }
-
-        .powerbi-iframe {
-          width: 100%;
-          height: 100%;
-          border: none;
+        /* Overscan by a few px so sub-pixel rounding never lets Power BI's white zoom row peek in. */
+        .pbi-iframe {
+          position: absolute;
+          top: 0;
+          left: -${OVERSCAN_PX / 2}px;
+          width: calc(100% + ${OVERSCAN_PX}px);
+          height: calc(100% + ${POWERBI_CHROME_PX + OVERSCAN_PX}px);
+          border: 0;
           display: block;
         }
 
-        @media (max-width: 768px) {
-          .powerbi-header__top {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-          .powerbi-switcher {
+        /* loading */
+        .pbi-loader {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          display: grid;
+          place-items: center;
+          align-content: center;
+          gap: 18px;
+          padding: 24px;
+          text-align: center;
+          background: var(--paper);
+        }
+        .pbi-loader--slow { background: rgba(246,241,231,0.96); }
+        .pbi-loader__skeleton {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 10px;
+          width: min(420px, 70%);
+        }
+        .pbi-loader__skeleton span {
+          height: 54px;
+          border-radius: 12px;
+          background: linear-gradient(90deg, rgba(24,49,46,0.05), rgba(24,49,46,0.11), rgba(24,49,46,0.05));
+          background-size: 200% 100%;
+          animation: pbiShimmer 1.4s ease-in-out infinite;
+        }
+        .pbi-loader__skeleton span:nth-child(2) { animation-delay: 0.12s; }
+        .pbi-loader__skeleton span:nth-child(3) { animation-delay: 0.24s; }
+        .pbi-loader__skeleton span:nth-child(4) { animation-delay: 0.36s; }
+        .pbi-loader__label { margin: 0; font-size: 12px; color: var(--muted); }
+        .pbi-loader__msg { display: grid; gap: 14px; justify-items: center; }
+        .pbi-loader__msg p { margin: 0; font-size: 14px; color: var(--ink); }
+        .pbi-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 11px 18px;
+          border-radius: 999px;
+          font-size: 12px;
+          font-weight: 700;
+          text-decoration: none;
+        }
+        .pbi-btn--accent { background: var(--deep); color: #fff; }
+        @keyframes pbiShimmer {
+          0% { background-position: 100% 0; }
+          100% { background-position: -100% 0; }
+        }
+
+        /* full screen (native where available, CSS overlay otherwise) */
+        .pbi-shell.is-expanded {
+          position: fixed;
+          inset: 0;
+          z-index: 10000;
+          max-width: none;
+          margin: 0;
+          padding: 0;
+          border-radius: 0;
+          display: grid;
+          place-items: center;
+          background: #0f2825;
+          box-shadow: none;
+        }
+        .pbi-shell.is-expanded .pbi-stage {
+          width: min(100vw, calc(100svh * ${REPORT_RATIO}));
+          border-radius: 0;
+        }
+        .pbi-close {
+          position: fixed;
+          top: 14px;
+          right: 14px;
+          z-index: 3;
+          width: 42px;
+          height: 42px;
+          display: grid;
+          place-items: center;
+          border-radius: 50%;
+          border: 1px solid rgba(255,255,255,0.25);
+          background: rgba(20,63,56,0.88);
+          color: #fff;
+          cursor: pointer;
+        }
+
+        .pbi-mobile-hint { display: none; }
+        .pbi-footnote {
+          margin: 16px auto 0;
+          max-width: calc((100svh - 150px) * 16 / 9);
+          font-size: 12px;
+          line-height: 1.6;
+          color: #7b8983;
+        }
+
+        @media (max-width: 900px) {
+          .pbi-highlights { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 760px) {
+          .pbi-page { padding-top: 96px; }
+          .pbi-switcher { width: 100%; }
+          .pbi-switcher__tab { flex: 1; justify-content: center; padding: 9px 10px; font-size: 11px; }
+          .pbi-highlights { gap: 8px; }
+          .pbi-highlight { padding: 16px; border-radius: 16px; }
+          .pbi-toolbar__hint { display: none; }
+          .pbi-toolbar { margin-bottom: 10px; }
+          .pbi-shell { padding: 5px; border-radius: 16px; }
+          .pbi-stage { border-radius: 12px; }
+          .pbi-mobile-hint {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             width: 100%;
-            overflow-x: auto;
+            margin-bottom: 10px;
+            padding: 13px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.88);
+            background: rgba(255,255,255,0.56);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 13px;
+            text-align: left;
+            cursor: pointer;
           }
-          .powerbi-iframe-wrapper {
-            height: 550px;
+          .pbi-mobile-hint svg { color: var(--green); flex-shrink: 0; }
+          /* Phones held upright: rotate the report to landscape inside the overlay. */
+          @media (orientation: portrait) {
+            .pbi-shell.is-expanded .pbi-stage {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              width: min(100svh, calc(100vw * ${REPORT_RATIO}));
+              transform: translate(-50%, -50%) rotate(90deg);
+            }
           }
         }
+        @media (prefers-reduced-motion: reduce) {
+          .pbi-loader__skeleton span { animation: none; }
+        }
       `}</style>
-    </motion.main>
+    </Motion.main>
   )
 }

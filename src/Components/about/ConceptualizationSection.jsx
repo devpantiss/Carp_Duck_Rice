@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { motion as Motion } from 'framer-motion'
+import { Fragment, useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { motion as Motion, stagger, useAnimate, useInView, useReducedMotion } from 'framer-motion'
 import CountUp from 'react-countup'
 
 const handleMouseMove = (e) => {
@@ -11,11 +11,10 @@ const handleMouseMove = (e) => {
 }
 
 const problemLines = [
-  'For centuries, humanity searched for efficiency.',
-  'We built machines.',
-  'We built systems.',
-  'We built industries.',
-  'But nature solved it long ago.',
+  'For a generation, our fields were fed with chemicals.',
+  'The soil grew tired. The ponds went quiet.',
+  'Farmers spent more, and earned less.',
+  'But nature had solved this long ago.',
 ]
 
 const forces = [
@@ -129,21 +128,267 @@ function AmbientLayer() {
   )
 }
 
+const revealEase = [0.22, 1, 0.36, 1]
+const LINE_GAP = 0.4 // seconds between lines that enter view together (reading pace)
+const ANSWER_BEAT = 0.9 // a breath before the gold answer, so the wilted field registers first
+const WORD_GAP = 0.07
+const LINE_SHIFT = 26
+
+const hiddenStyle = (reduceMotion, shift) => ({
+  opacity: 0,
+  transform: `translateY(${reduceMotion ? 0 : shift}px)`,
+  filter: reduceMotion ? 'blur(0px)' : 'blur(5px)',
+})
+const shownStyle = { opacity: 1, transform: 'translateY(0px)', filter: 'blur(0px)' }
+const GLOW_OFF = '0 0 0px rgba(243,201,105,0)'
+
+function RevealLine({ children, index, isAnswer, schedule, reduceMotion, onVisibility }) {
+  const [scope, animate] = useAnimate()
+  const inView = useInView(scope, { amount: 0.5, margin: '0px 0px -8% 0px' })
+
+  const token = useRef(0)
+
+  useEffect(() => {
+    const el = scope.current
+    if (!el) return
+    // Answer words animate individually; other lines animate as a whole.
+    const target = isAnswer ? el.querySelectorAll('.concept-cinema__problem-word') : el
+    const current = ++token.current
+
+    if (inView) {
+      schedule(index, isAnswer, (delay) => {
+        if (token.current !== current) return // left view before its turn came
+        onVisibility(index, true, delay)
+        const duration = reduceMotion ? 0.5 : isAnswer ? 0.9 : 1.1
+        animate(target, shownStyle, {
+          duration,
+          ease: revealEase,
+          delay: isAnswer && !reduceMotion ? stagger(WORD_GAP, { startDelay: delay }) : delay,
+        })
+        if (isAnswer) {
+          animate(el, { textShadow: [GLOW_OFF, '0 0 44px rgba(243,201,105,0.32)', '0 0 26px rgba(243,201,105,0.12)'] }, { duration: 1.8, ease: 'easeOut', delay: delay + 0.25 })
+        }
+      })
+    } else {
+      onVisibility(index, false, 0)
+      // Exit quickly toward the side the line left from, so a replay follows the scroll direction.
+      const leftAbove = el.getBoundingClientRect().top < 0
+      animate(target, hiddenStyle(reduceMotion, leftAbove ? -LINE_SHIFT : LINE_SHIFT), { duration: 0.35, ease: 'easeOut' })
+      if (isAnswer) animate(el, { textShadow: GLOW_OFF }, { duration: 0.3 })
+    }
+  }, [inView, index, isAnswer, schedule, reduceMotion, animate, scope, onVisibility])
+
+  const initial = hiddenStyle(reduceMotion, LINE_SHIFT)
+
+  if (isAnswer) {
+    const words = children.split(' ')
+    return (
+      <h2 ref={scope} className="concept-cinema__problem-line is-gold" aria-label={children}>
+        {words.map((word, i) => (
+          <Fragment key={`${word}-${i}`}>
+            <span className="concept-cinema__problem-word" aria-hidden="true" style={initial}>
+              {word}
+            </span>
+            {i < words.length - 1 && ' '}
+          </Fragment>
+        ))}
+      </h2>
+    )
+  }
+
+  return (
+    <p ref={scope} className="concept-cinema__problem-line" style={initial}>
+      {children}
+    </p>
+  )
+}
+
+// ── Field illustration ───────────────────────────────────────────────
+// Line-art paddy that follows the text: 0 idle → 1 chemicals → 2 tired → 3 dimmed → 4 alive.
+const FIELD_STALKS = Array.from({ length: 30 }, (_, i) => {
+  const left = i < 15
+  const k = i % 15
+  const back = k % 3 === 1
+  return {
+    id: i,
+    x: left ? 40 + k * 31 + ((k * 37) % 11) : 1400 - k * 31 - ((k * 29) % 13),
+    y: back ? 238 : 270 + (k % 3) * 5,
+    s: back ? 0.6 + (k % 4) * 0.05 : 0.86 + (k % 5) * 0.07,
+    back,
+    flip: (k % 2 === 0) !== left,
+    droop: (left ? -1 : 1) * (16 + ((k * 7) % 12)),
+    delay: (left ? 14 - k : 14 - k) * 28 + (left ? 0 : 14),
+  }
+})
+// Reeds along the pond edge — these stay in frame on narrow screens, where the sides are cropped.
+const POND_REEDS = [455, 480, 506, 532, 908, 934, 960, 986].map((x, k) => {
+  const left = x < 720
+  return {
+    id: 30 + k,
+    x,
+    y: 274 + (k % 2) * 6,
+    s: 0.72 + (k % 3) * 0.09,
+    back: false,
+    flip: k % 2 === 1,
+    droop: (left ? -1 : 1) * (18 + ((k * 5) % 9)),
+    delay: (left ? k : k - 4) * 40,
+  }
+})
+FIELD_STALKS.push(...POND_REEDS)
+const FIELD_DROPS = [170, 300, 470, 970, 1150, 1290]
+
+function Stalk({ stalk }) {
+  return (
+    <g transform={`translate(${stalk.x} ${stalk.y}) scale(${stalk.flip ? -stalk.s : stalk.s} ${stalk.s})`} opacity={stalk.back ? 0.55 : 1}>
+      <g className="cdr-stalk" style={{ '--droop': `${stalk.droop * (stalk.flip ? -1 : 1)}deg`, '--d': `${stalk.delay}ms` }}>
+        <g className="cdr-sway" style={{ animationDelay: `${-(stalk.id % 7) * 0.7}s` }}>
+          <path className="cdr-leaf" d="M0 -6 C -8 -32 -20 -50 -36 -58" />
+          <path className="cdr-leaf" d="M1 -16 C 8 -42 18 -56 32 -62" />
+          <path className="cdr-stem" d="M0 0 C 1 -35 2 -70 6 -100 C 9 -116 18 -124 28 -122" />
+          {[[9, -106, -60], [14, -114, -40], [20, -119, -20], [26, -121, 0]].map(([gx, gy, r]) => (
+            <ellipse key={gx} className="cdr-grain" cx={gx} cy={gy} rx="2.6" ry="1.3" transform={`rotate(${r} ${gx} ${gy})`} />
+          ))}
+        </g>
+      </g>
+    </g>
+  )
+}
+
+function FieldIllustration({ phase }) {
+  return (
+    <div className={`cdr-field cdr-field--p${phase}`} aria-hidden="true">
+      <svg viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">
+        <defs>
+          <radialGradient id="cdrPondGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stopColor="#74e6ac" stopOpacity="0.28" />
+            <stop offset="1" stopColor="#74e6ac" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="cdrSunGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stopColor="#f3c969" stopOpacity="0.32" />
+            <stop offset="1" stopColor="#f3c969" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {/* sun rising behind the hills */}
+        <g className="cdr-sun">
+          <ellipse cx="720" cy="132" rx="170" ry="80" fill="url(#cdrSunGlow)" />
+          <path className="cdr-sun-arc" d="M676 136 A44 44 0 0 1 764 136" />
+        </g>
+
+        {/* landscape contours */}
+        <path className="cdr-contour" pathLength="1" d="M0 146 C 200 118 380 134 560 128 C 760 120 900 142 1080 126 C 1240 114 1360 130 1440 122" />
+        <path className="cdr-contour cdr-contour--2" pathLength="1" d="M0 196 C 140 178 300 186 520 206" />
+        <path className="cdr-contour cdr-contour--2" pathLength="1" d="M920 206 C 1140 186 1300 178 1440 192" />
+        <path className="cdr-contour cdr-contour--3" pathLength="1" d="M0 228 C 180 214 360 222 540 240" />
+        <path className="cdr-contour cdr-contour--3" pathLength="1" d="M900 240 C 1080 222 1260 214 1440 226" />
+
+        {/* pond */}
+        <ellipse className="cdr-pond-glow" cx="720" cy="264" rx="260" ry="46" fill="url(#cdrPondGlow)" />
+        <ellipse className="cdr-pond" pathLength="1" cx="720" cy="264" rx="200" ry="22" />
+        <path className="cdr-shimmer" d="M610 262 h34 M688 270 h52 M770 258 h28" />
+        {[0, 1, 2].map((r) => (
+          <ellipse key={r} className="cdr-ripple" cx="736" cy="264" rx="54" ry="6" style={{ animationDelay: `${r * 1.3}s` }} />
+        ))}
+
+        {/* carp leaping */}
+        <g transform="translate(650 262)">
+          <g className="cdr-fish">
+            <path d="M0 0 C 7 -6 18 -6 24 0 C 18 6 7 6 0 0 Z M24 0 L31 -5 L31 5 Z" />
+          </g>
+        </g>
+
+        {/* duck gliding */}
+        <g transform="translate(830 258)">
+          <g className="cdr-duck">
+            <g transform="scale(-1 1)">
+              <path d="M0 0 C 2 -7 14 -10 24 -6 C 26 -12 29 -17 34 -17 C 39 -17 41 -13 40 -10 L 46 -9 L 40 -7 C 38 -3 36 0 32 2 C 22 5 6 4 0 0 Z" />
+            </g>
+            <path className="cdr-duck-wake" d="M-50 6 h44" />
+          </g>
+        </g>
+
+        {/* chemical drops */}
+        {FIELD_DROPS.map((x, i) => (
+          <g key={x} transform={`translate(${x} 20)`}>
+            <path className="cdr-drop" style={{ animationDelay: `${i * 0.45}s` }} d="M0 0 C 3 5 4 8 0 11 C -4 8 -3 5 0 0 Z" />
+          </g>
+        ))}
+
+        {FIELD_STALKS.map((stalk) => (
+          <Stalk key={stalk.id} stalk={stalk} />
+        ))}
+      </svg>
+    </div>
+  )
+}
+
+function fieldReducer(state, { index, visible }) {
+  const vis = [...state.vis]
+  vis[index] = visible
+  let phase = state.phase
+  if (vis[problemLines.length - 1]) phase = 4
+  else {
+    const last = vis.slice(0, -1).lastIndexOf(true)
+    // When nothing is visible, keep the last phase so the field doesn't reset while still on screen.
+    if (last >= 0) phase = last + 1
+  }
+  return { vis, phase }
+}
+
 function ProblemScene() {
+  const reduceMotion = useReducedMotion()
+  // Lines that enter view together are batched per frame, sorted top-to-bottom,
+  // and queued so they always read in order, one after another.
+  const nextSlot = useRef(0)
+  const queue = useRef([])
+  const frame = useRef(0)
+  const schedule = useCallback((index, isAnswer, run) => {
+    queue.current.push({ index, isAnswer, run })
+    if (frame.current) return
+    frame.current = requestAnimationFrame(() => {
+      frame.current = 0
+      const batch = queue.current.sort((a, b) => a.index - b.index)
+      queue.current = []
+      const now = performance.now() / 1000
+      for (const item of batch) {
+        const start = Math.max(now, nextSlot.current) + (item.isAnswer && !reduceMotion ? ANSWER_BEAT : 0)
+        nextSlot.current = start + (reduceMotion ? 0.1 : LINE_GAP)
+        item.run(start - now)
+      }
+    })
+  }, [reduceMotion])
+
+  // The illustration changes when each line actually appears (after its queued delay).
+  const [field, dispatch] = useReducer(fieldReducer, { vis: problemLines.map(() => false), phase: 0 })
+  const timers = useRef({})
+  const onVisibility = useCallback((index, visible, delay) => {
+    clearTimeout(timers.current[index])
+    if (visible) timers.current[index] = setTimeout(() => dispatch({ index, visible: true }), delay * 1000)
+    else dispatch({ index, visible: false })
+  }, [])
+  useEffect(() => {
+    const pending = timers.current
+    return () => {
+      Object.values(pending).forEach(clearTimeout)
+      cancelAnimationFrame(frame.current)
+    }
+  }, [])
+
   return (
     <section className="concept-cinema__chapter concept-cinema__chapter--problem">
+      <FieldIllustration phase={field.phase} />
       <div className="concept-cinema__problem-stack">
         {problemLines.map((line, index) => (
-          <Motion.h2
+          <RevealLine
             key={line}
-            className={index === problemLines.length - 1 ? 'is-gold' : ''}
-            initial={{ opacity: 0, y: 46, filter: 'blur(14px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            viewport={{ once: false, amount: 0.68 }}
-            transition={{ duration: 0.9, delay: index * 0.18 }}
+            index={index}
+            isAnswer={index === problemLines.length - 1}
+            schedule={schedule}
+            reduceMotion={reduceMotion}
+            onVisibility={onVisibility}
           >
             {line}
-          </Motion.h2>
+          </RevealLine>
         ))}
       </div>
     </section>
@@ -288,7 +533,7 @@ function VisionScene() {
                 key={force.name}
                 style={positionStyle}
               >
-                {force.name} -&gt; {force.morph}
+                {force.name} → {force.morph}
               </span>
             )
           })}
@@ -674,6 +919,7 @@ export default function ConceptualizationSection() {
         .concept-cinema__chapter {
           position: relative;
           min-height: 100vh;
+          min-height: 100svh;
           overflow: hidden;
           display: grid;
           place-items: center;
@@ -739,11 +985,11 @@ export default function ConceptualizationSection() {
         }
         .concept-cinema__problem-stack {
           display: grid;
-          gap: clamp(12px, 2vw, 26px);
+          gap: clamp(18px, 2.6vw, 40px);
           text-align: center;
           max-width: 1240px;
         }
-        .concept-cinema__problem-stack h2,
+        .concept-cinema__problem-line,
         .concept-cinema__discovery-text,
         .concept-cinema__insights p,
         .concept-cinema__vision-copy h2,
@@ -751,14 +997,172 @@ export default function ConceptualizationSection() {
           font-family: var(--font-display);
           font-weight: 300;
           letter-spacing: 0;
+          text-wrap: balance;
         }
-        .concept-cinema__problem-stack h2 {
-          font-size: clamp(2.7rem, 7.2vw, 8.5rem);
-          line-height: 0.96;
+        /* Setup lines are smaller so the whole story fits one screen; the gold answer is the largest. */
+        .concept-cinema__problem-line {
+          margin: 0;
+          font-size: clamp(2.1rem, 4.6vw, 5.5rem);
+          line-height: 1.06;
           color: rgba(255,255,255,0.92);
+          text-wrap: balance;
+        }
+        .concept-cinema__problem-line.is-gold {
+          margin-top: clamp(10px, 2vw, 32px);
+          font-size: clamp(2.6rem, 6.2vw, 7.25rem);
+          line-height: 1.02;
+        }
+        .concept-cinema__problem-word {
+          display: inline-block;
         }
         .is-gold {
           color: #f3c969 !important;
+        }
+        /* ── Problem scene: field illustration ── */
+        .concept-cinema__chapter.concept-cinema__chapter--problem {
+          --field-h: clamp(180px, 32vh, 330px);
+          padding-bottom: calc(var(--field-h) * 0.72);
+        }
+        .concept-cinema__problem-stack {
+          position: relative;
+          z-index: 1;
+        }
+        .cdr-field {
+          --line: rgba(255,255,255,0.13);
+          --stalk: rgba(168,176,172,0.5);
+          --grain: rgba(176,176,166,0.4);
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: var(--field-h);
+          z-index: 0;
+          pointer-events: none;
+          -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 88%, transparent 100%);
+          mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 88%, transparent 100%);
+          transition: opacity 1.6s ease, filter 1.6s ease;
+        }
+        .cdr-field svg {
+          width: 100%;
+          height: 100%;
+          display: block;
+          overflow: visible;
+        }
+        .cdr-field path,
+        .cdr-field ellipse {
+          fill: none;
+          stroke-width: 1.2;
+          stroke-linecap: round;
+          vector-effect: non-scaling-stroke;
+          transition: stroke 1.8s ease, fill 1.8s ease, opacity 1.4s ease;
+        }
+        .cdr-field--p3 { opacity: 0.55; }
+        .cdr-field--p4 {
+          --line: rgba(116,230,172,0.3);
+          --stalk: rgba(116,230,172,0.78);
+          --grain: #f3c969;
+        }
+
+        .cdr-contour {
+          stroke: var(--line);
+          stroke-dasharray: 1;
+          stroke-dashoffset: 1;
+          transition: stroke-dashoffset 2.4s cubic-bezier(0.22,1,0.36,1), stroke 1.8s ease !important;
+        }
+        .cdr-contour--2 { opacity: 0.7; transition-delay: 0.2s !important; }
+        .cdr-contour--3 { opacity: 0.5; transition-delay: 0.35s !important; }
+        .cdr-field:not(.cdr-field--p0) .cdr-contour { stroke-dashoffset: 0; }
+
+        .cdr-pond {
+          stroke: var(--line);
+          stroke-dasharray: 1;
+          stroke-dashoffset: 1;
+          transition: stroke-dashoffset 2s cubic-bezier(0.22,1,0.36,1) 0.3s, stroke 1.8s ease !important;
+        }
+        .cdr-field:not(.cdr-field--p0) .cdr-pond { stroke-dashoffset: 0; }
+        .cdr-shimmer { stroke: var(--line); opacity: 0; }
+        .cdr-field--p1 .cdr-shimmer,
+        .cdr-field--p4 .cdr-shimmer { opacity: 0.8; }
+        .cdr-pond-glow { opacity: 0; }
+        .cdr-field--p4 .cdr-pond-glow { opacity: 1; }
+
+        /* stalks: grow in, wilt, then stand back up */
+        .cdr-stem, .cdr-leaf { stroke: var(--stalk); }
+        .cdr-leaf { opacity: 0.8; }
+        .cdr-grain { fill: var(--grain) !important; stroke: none !important; }
+        .cdr-stalk {
+          transform: rotate(0deg) scaleY(0);
+          transition: transform 1.6s cubic-bezier(0.22,1,0.36,1) var(--d);
+        }
+        .cdr-field--p1 .cdr-stalk { transform: rotate(calc(var(--droop) * 0.2)) scaleY(1); }
+        .cdr-field--p2 .cdr-stalk,
+        .cdr-field--p3 .cdr-stalk { transform: rotate(var(--droop)) scaleY(0.9); }
+        .cdr-field--p4 .cdr-stalk {
+          transform: rotate(0deg) scaleY(1);
+          transition: transform 1.8s cubic-bezier(0.34,1.36,0.64,1) var(--d);
+        }
+        .cdr-field--p4 .cdr-sway { animation: cdrSway 5.5s ease-in-out infinite; }
+
+        /* chemical drops fall while the field is struggling */
+        .cdr-drop {
+          fill: rgba(196,204,214,0.5) !important;
+          stroke: none !important;
+          opacity: 0;
+        }
+        .cdr-field--p1 .cdr-drop,
+        .cdr-field--p2 .cdr-drop,
+        .cdr-field--p3 .cdr-drop { animation: cdrDrop 2.7s cubic-bezier(0.55,0,0.9,0.5) infinite; }
+
+        /* life returns */
+        .cdr-sun {
+          opacity: 0;
+          transform: translateY(26px);
+          transition: opacity 2s ease 0.4s, transform 2.4s cubic-bezier(0.22,1,0.36,1) 0.4s;
+        }
+        .cdr-sun-arc { stroke: rgba(243,201,105,0.7); }
+        .cdr-field--p4 .cdr-sun { opacity: 1; transform: translateY(0); }
+        .cdr-ripple {
+          stroke: rgba(116,230,172,0.5);
+          opacity: 0;
+          transform-box: fill-box;
+          transform-origin: center;
+        }
+        .cdr-field--p4 .cdr-ripple { animation: cdrRipple 3.9s ease-out infinite; }
+        .cdr-fish, .cdr-duck { opacity: 0; transform-box: fill-box; transform-origin: center; }
+        .cdr-fish path { fill: rgba(243,201,105,0.85) !important; stroke: none !important; }
+        .cdr-duck path { fill: rgba(240,236,224,0.85) !important; stroke: none !important; }
+        .cdr-duck .cdr-duck-wake { fill: none !important; stroke: rgba(116,230,172,0.4) !important; }
+        .cdr-field--p4 .cdr-fish { animation: cdrLeap 7s ease-in-out 1.4s infinite; }
+        .cdr-field--p4 .cdr-duck { opacity: 1; transition: opacity 1.6s ease 1s; animation: cdrGlide 18s ease-in-out infinite alternate; }
+
+        @keyframes cdrSway {
+          0%, 100% { transform: rotate(-1.6deg); }
+          50% { transform: rotate(1.6deg); }
+        }
+        @keyframes cdrDrop {
+          0% { opacity: 0; transform: translateY(0); }
+          15% { opacity: 1; }
+          85% { opacity: 0.8; }
+          100% { opacity: 0; transform: translateY(200px); }
+        }
+        @keyframes cdrRipple {
+          0% { opacity: 0.7; transform: scale(0.4); }
+          100% { opacity: 0; transform: scale(2.4); }
+        }
+        @keyframes cdrLeap {
+          0% { opacity: 0; transform: translate(0, 6px) rotate(-55deg); }
+          3% { opacity: 1; }
+          12% { transform: translate(34px, -44px) rotate(0deg); }
+          21% { opacity: 1; transform: translate(68px, 6px) rotate(55deg); }
+          24%, 100% { opacity: 0; transform: translate(68px, 6px) rotate(55deg); }
+        }
+        @keyframes cdrGlide {
+          0% { transform: translate(0, 0); }
+          50% { transform: translate(-60px, 1px); }
+          100% { transform: translate(-120px, 0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .cdr-field *, .cdr-field { animation: none !important; transition-duration: 0.4s !important; transition-delay: 0s !important; }
         }
         .concept-cinema__aerial {
           position: absolute;
@@ -1312,9 +1716,79 @@ export default function ConceptualizationSection() {
             min-height: 240px;
           }
         }
+        /* Phones & small tablets: chapters size to their content instead of a full screen each. */
+        @media (max-width: 760px) {
+          .concept-cinema__chapter {
+            min-height: 0;
+            padding: clamp(72px, 12svh, 112px) 20px;
+          }
+          .concept-cinema__chapter.concept-cinema__chapter--problem {
+            min-height: 92svh;
+            --field-h: clamp(150px, 26svh, 210px);
+            padding-bottom: calc(var(--field-h) * 0.8);
+          }
+          .concept-cinema__chapter--final {
+            min-height: 70svh;
+          }
+          .concept-cinema__chapter--discovery {
+            gap: 12px;
+          }
+          .concept-cinema__aerial {
+            position: relative;
+            inset: auto;
+            width: 100%;
+          }
+          .concept-cinema__aerial svg {
+            width: 100%;
+          }
+          .concept-cinema__discovery-text {
+            margin-top: 0;
+            font-size: clamp(1.9rem, 7.4vw, 2.6rem);
+            line-height: 1.12;
+          }
+          .concept-cinema__forces {
+            width: 100%;
+          }
+          .concept-cinema__force {
+            min-height: clamp(200px, 30svh, 260px);
+          }
+          .concept-cinema__flow {
+            inset: 12% 0;
+            opacity: 0.45;
+          }
+          .concept-cinema__insights {
+            gap: 14px;
+          }
+          .concept-cinema__insights p {
+            font-size: clamp(2.2rem, 9.4vw, 3.2rem);
+            line-height: 1.06;
+          }
+          .concept-cinema__vision-copy h2 {
+            font-size: clamp(1.9rem, 7.8vw, 2.8rem);
+            line-height: 1.12;
+          }
+          .concept-cinema__chapter--final h2 {
+            font-size: clamp(2.2rem, 9.6vw, 3.4rem);
+            line-height: 1.08;
+          }
+          .concept-cinema__metrics {
+            width: 100%;
+            padding: 0;
+            gap: 14px;
+          }
+          .concept-cinema__metric {
+            padding: 24px 20px;
+          }
+          .concept-cinema__sim {
+            width: 100%;
+            margin-top: 40px;
+            padding: 24px 18px;
+            border-radius: 20px;
+          }
+        }
         @media (max-width: 560px) {
           .concept-cinema__chapter {
-            padding: 24px;
+            padding: clamp(64px, 10svh, 96px) 16px;
           }
           .concept-cinema__metrics {
             grid-template-columns: 1fr;
